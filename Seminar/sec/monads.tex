@@ -4,8 +4,9 @@
 def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
 def unit[A](a : A) : M[A]
 \end{lstlisting}
+	\pause
 	\begin{block}{Definition}
-		Every class that have bind and unit methods above which respect the following rules is a monad:
+		A monad is a class that has bind and unit methods which respect the following laws:
 		\begin{enumerate}[<+->]
 			\item \textbf{Left identity:}  given a function $f$ and an object $obj$ we have that $bind(unit(obj))(f) = f(obj)$.
 			\item \textbf{Right identity:} given a monad $obj$ we have that $bind(obj)(unit) = obj$
@@ -13,7 +14,7 @@ def unit[A](a : A) : M[A]
 			$bind(bind(obj)(f))(g) = bind(obj)(x \Rightarrow flatMap(f(x))(g))$
 		\end{enumerate}
 	\end{block}
-	\pause[3]
+	\pause[4]
 	We could test these laws through PBT ScalaCheck.
 \end{frame}
 
@@ -46,12 +47,12 @@ implicit object OptionMonad extends Monad[Option] {
 	override def unit[A](a: A): Option[A] = Some(a)
 }		
 \end{lstlisting}		
-	The first case is easy because List class already has flatMap function
+	The first case is easy because List class has already flatMap function
 	(to be honestly, Option has flatMap method too).
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (3)}		
-	As before, we can create a generic method that apply bind:
+	As before, we can create a generic method that applies bind:
 \begin{lstlisting}[language=scala]
 def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = {
 	monad.bind(a)(f)
@@ -76,7 +77,7 @@ Set(true, true, false).applyBind((x : Boolean) => Set(!x)) // COMPILE ERROR
 \end{frame}
 
 \begin{frame}[fragile]{Differences between Functors and Monads (1)}
-	Why should we use monads instead of functor?
+	Why should we use monads instead of functors?
 	
 	Let's start from a simple example: concatenation of map function.
 \begin{lstlisting}[language=scala]
@@ -84,7 +85,7 @@ val a : Option[Int] = Some(20)
 val temp = a.applyMap(_ + 1) //Some(2)
 temp.applyMap(_ + 1) // Some(3)
 \end{lstlisting}				
-	That works nicely. We start from an Option of Int, after the first step we have an Option of Int on which we apply again 
+	This example works nicely. We start from an Option of Int, after the first step we have an Option of Int on which we apply again 
 	the same map function and we finally get an Option of Int.
 \end{frame}
 
@@ -96,13 +97,13 @@ def f(x:Int) : Option[Int] = if (x == 0) None else Some(2 / x)
 val temp1 = a.applyMap(f) // return Some(Some(0))
 temp1.applyMap(f)// COMPILE ERROR
 \end{lstlisting}	
-	Here we stuck because, after the first step, we get an Option of Option of Int. 
+	Here we stuck because, after the first step, we got an Option of Option of Int. 
 	We could manage this problem and adjust the second function	to work with Option of Option of Int, 
-	but in this way we get an Option of Option of Option of Int and we could continue getting more and more layer of Option.
+	but in this way we would get an Option of Option of Option of Int as result type and we could continue getting more and more layers of Option.
 	
 	\pause
 	
-	Here comes in help monads!
+	Here monads come to help!
 \begin{lstlisting}[language=scala]
 val temp = a.bind(f) // return Some(0)
 temp.bind(f) //None

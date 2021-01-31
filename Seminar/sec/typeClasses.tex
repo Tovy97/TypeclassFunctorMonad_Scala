@@ -1,25 +1,25 @@
-\begin{frame}{Preamble: Type classes}
+\begin{frame}{Introduction: Type classes}
 	When we want to extend an existing class with a new interface 
-	(and so, possibly, with new functionalities) we have four choice:	
+	(and so, possibly, with new functionalities) we have four choices:	
 	\begin{enumerate}[<+->]
-		\item Extend the class itself, but often we can't modify it (it could be taken from an API)
-		\item Create a new class that extends the original class and the new interface (not always possible)
-		\item Create a wrap class that contains the original class and extends the new interface
+		\item Extending the class itself, but often we can't modify it (it could be taken from an API)
+		\item Creating a new class that extends the original class and the new interface (not always possible)
+		\item Creating a wrapping class that contains the original class and extends the new interface
 		\item Using type classes
 	\end{enumerate}
 	\pause[4]
 	The last choice is a classical pattern of FP.			
 \end{frame}
 
-\begin{frame}[fragile]{Preamble: Type classes - Example (1)}
-	Let's present type classes with an example.
+\begin{frame}[fragile]{Introduction: Type classes - Example (1)}
+	Let's introduce type classes with an example.
 	We have this scala interface
 \begin{lstlisting}[language=scala]
 trait Summable[T] {
 	def sumElements(list: List[T]): T
 }
 \end{lstlisting}
-	and we want that Int and String class implement it.
+	and we want that Int and String classes implement it.
 
 	\pause
 
@@ -27,17 +27,17 @@ trait Summable[T] {
 	
 	\pause
 	
-	We could create a new classes MyInt and MyStr that extends respectively Int and String but that classes are final, so we cannot work in 
+	We could create new classes MyInt and MyStr that extend respectively Int and String but those classes are final, so we cannot work in 
 	this way.
 	
 	\pause
 	
-	Surely we can create a wrap classes MyInt and MyStr, but in this way we have now two definition of Int and of String and it could be messy.
+	Surely we can create wrapping classes MyInt and MyStr, but in this way we have now two definitions of Int and of String and it could be messy.
 \end{frame}
 
-\begin{frame}[fragile]{Preamble: Type classes - Example (2)}	
+\begin{frame}[fragile]{Introduction: Type classes - Example (2)}	
 	Let's try type classes!
-	We start creating two implicit objects that implement the interface as follow:
+	We start creating two implicit objects that implement the interface as follows:
 \begin{lstlisting}[language=scala]
 implicit object IntSummable extends Summable[Int] {
 	def sumElements(list: List[Int]): Int = list.sum
@@ -50,16 +50,16 @@ implicit object StringSummable extends Summable[String] {
 
 	\pause
 
-	In this way we can now define a generic method that use sumElements
+	In this way we can now define a generic method that uses sumElements
 \begin{lstlisting}[language=scala]
 def sumAll[T](l: List[T])(implicit summable: Summable[T]): T =
 	summable.sumElements(l)		
 \end{lstlisting}	
 \end{frame}
 
-\begin{frame}[fragile]{Preamble: Type classes - Example (3)}
-	The advantage of this approach is that we can use sum method only with Int and String (all the other types with will create 
-	a compile error) and, thanks to implict, we don't have to pass summable object to sum.
+\begin{frame}[fragile]{Introduction: Type classes - Example (3)}
+	The advantage of this approach is that we can use sumAll method only with Int and String (all the other types will create 
+	a compile error) and, because of implict, we don't have to pass summable object to sumAll.
 	
 \begin{lstlisting}[language=scala]
 sumAll(List(1,2,3)) // 6
@@ -69,7 +69,7 @@ sumAll(List(true, true, false)) // COMPILE ERROR
 
 \end{frame}
 	
-\begin{frame}[fragile]{Preamble: Type classes - Example (4)}
+\begin{frame}[fragile]{Introduction: Type classes - Example (4)}
 	
 	Through extension method we could also use sumAll as method in List of summable:
 \begin{lstlisting}[language=scala]

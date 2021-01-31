@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.9)  31 JAN 2021 17:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2021.1.9)  31 JAN 2021 18:48
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1045,18 +1045,20 @@ File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
 \openout4 = `seminario.vrb'.
 
  (./seminario.vrb
-LaTeX Font Info:    Trying to load font information for U+msa on input line 9.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 10.
+
 
 (c:/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 9.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 10.
+
 
 (c:/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    Trying to load font information for OT1+mathkerncmss on inp
-ut line 9.
+ut line 10.
 
 (c:/texlive/2020/texmf-dist/tex/latex/sansmathaccent/ot1mathkerncmss.fd
 File: ot1mathkerncmss.fd 2020/01/31 Fontinst v1.933 font definitions for OT1/ma
@@ -1066,10 +1068,7 @@ thkerncmss.
 
 ] (./seminario.vrb) [17
 
-]
-\openout4 = `seminario.vrb'.
-
- (./seminario.vrb) [18
+] (./seminario.vrb) [18
 
 ]
 \openout4 = `seminario.vrb'.
@@ -1087,26 +1086,23 @@ thkerncmss.
 
  (./seminario.vrb) [21
 
-]) (./sec/monads.tex
+]
 \openout4 = `seminario.vrb'.
 
+ (./seminario.vrb) [22
 
-(./seminario.vrb) [22
+])
+(./sec/monads.tex
+\openout4 = `seminario.vrb'.
 
-] (./seminario.vrb) [23
+ (./seminario.vrb) [23
 
 ] (./seminario.vrb) [24
 
 ]
-\openout4 = `seminario.vrb'.
-
-
 (./seminario.vrb) [25
 
-]
-\openout4 = `seminario.vrb'.
-
- (./seminario.vrb) [26
+] (./seminario.vrb) [26
 
 ]
 \openout4 = `seminario.vrb'.
@@ -1130,11 +1126,22 @@ thkerncmss.
  (./seminario.vrb) [30
 
 ]
+\openout4 = `seminario.vrb'.
+
+
 (./seminario.vrb) [31
 
-]) [32
+]
+\openout4 = `seminario.vrb'.
 
-] [33
+ (./seminario.vrb) [32
+
+] (./seminario.vrb) [33
+
+]) [34
+
+]
+[35
 
 ]
 \tf@nav=\write6
@@ -1148,13 +1155,13 @@ thkerncmss.
 
  (./seminario.aux)
 Package rerunfilecheck Info: File `seminario.out' has not changed.
-(rerunfilecheck)             Checksum: E1B3A7DE6C2C9041955B969EF0E4E2EC;203.
+(rerunfilecheck)             Checksum: C71B4A400FC333DB716AB06A0C5E480D;207.
  ) 
 Here is how much of TeX's memory you used:
- 21031 strings out of 479307
- 388202 string characters out of 5871291
- 1075829 words of memory out of 5000000
- 37580 multiletter control sequences out of 15000+600000
+ 21040 strings out of 479307
+ 388311 string characters out of 5871291
+ 1075907 words of memory out of 5000000
+ 37581 multiletter control sequences out of 15000+600000
  416362 words of font info for 59 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  131i,15n,132p,413b,1417s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1168,10 +1175,10 @@ r/sfss1095.pfb><c:/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfss1200
 .pfb><c:/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sfss1440.pfb><c:/t
 exlive/2020/texmf-dist/fonts/type1/public/cm-super/sfsx1095.pfb><c:/texlive/202
 0/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb>
-Output written on seminario.pdf (33 pages, 219401 bytes).
+Output written on seminario.pdf (35 pages, 227276 bytes).
 PDF statistics:
- 1044 PDF objects out of 1200 (max. 8388607)
- 945 compressed objects within 10 object streams
- 71 named destinations out of 1000 (max. 500000)
- 297 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1117 PDF objects out of 1200 (max. 8388607)
+ 1005 compressed objects within 11 object streams
+ 75 named destinations out of 1000 (max. 500000)
+ 357 words of extra memory for PDF output out of 10000 (max. 10000000)
 

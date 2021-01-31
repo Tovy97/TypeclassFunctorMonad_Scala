@@ -3,14 +3,15 @@
 \begin{lstlisting}[language=scala]
 def fmap[A, B](fa: F[A])(f: A => B): F[B]
 \end{lstlisting}
+	\pause
 	\begin{block}{Definition}
-		Every class that have the map method above which respects the following laws is a functor:
+		A functor is a class that has the map method which respects the following laws:
 		\begin{enumerate}[<+->]
 			\item \textbf{Identity:} given the identity function $id$ and a functor $obj$ we have that $map(obj)(id) = obj$.
 			\item \textbf{Composition:} given two functions $f$ and $g$ and a functor $obj$ we have that $map(map(obj)(f))(g) = map(obj)(g \circ f)$
 		\end{enumerate}
 	\end{block}
-	\pause[2]
+	\pause[3]
 	We could test these laws through PBT ScalaCheck.
 \end{frame}
 
@@ -39,12 +40,12 @@ implicit object optionFunctor: Functor[Option] {
 	}
 }			
 \end{lstlisting}		
-	The first case is easy because List class already have map function
-	(to be honestly, Option have map method too).
+	The first case is easy because List class has already map function
+	(to be honestly, Option has map method too).
 \end{frame}
 	
 \begin{frame}[fragile]{Functors - Implementation (3)}			
-	As before, we can create a generic method that apply map:
+	As before, we can create a generic method that applies map:
 \begin{lstlisting}[language=scala]
 def applyMap[F[_], A, B](a: F[A])(f: A => B)(implicit functor: Functor[F]): F[B] = {
 	functor.fmap(a)(f)
@@ -53,7 +54,7 @@ applyMap(List(1, 2, 3))(_ + 1) //List(2, 3, 4)
 applyMap(Some(1) : Option[Int])(_ + 1) // Some(2)
 applyMap(Set(true, true, false))(!_) // COMPILE ERROR
 \end{lstlisting}	
-	Through extension method we could also use applyMap as method in functors:
+	Through extension method we could also use applyMap as method of functors:
 \begin{lstlisting}[language=scala]
 implicit class FunctorMethod[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
 	def applyMap(f: A => B): F[B] = functor.fmap(a)(f)
@@ -64,9 +65,9 @@ Set(true, true, false).applyMap(!_) // COMPILE ERROR
 \end{lstlisting}	
 \end{frame}
 
-\begin{frame}[fragile]{Why functors are useful?}
+\begin{frame}[fragile]{Why are functors useful?}
 	Functors allow to avoid boilerplate code.
-	Take Option type. 
+	Let's take Option type. 
 	Normally before applying a function on Option we should check if that value is either Some or None through pattern matching:
 \begin{lstlisting}[language=scala]
 val a : Option[Int] = Some(20)
