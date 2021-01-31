@@ -1,0 +1,86 @@
+\begin{frame}[fragile]{Functors}
+	Let's start with map function:
+\begin{lstlisting}[language=scala]
+def fmap[A, B](fa: F[A])(f: A => B): F[B]
+\end{lstlisting}
+	\begin{block}{Definition}
+		Every class that have the map method above which respects the following laws is a functor:
+		\begin{enumerate}[<+->]
+			\item \textbf{Identity:} given the identity function $id$ and a functor $obj$ we have that $map(obj)(id) = obj$.
+			\item \textbf{Composition:} given two functions $f$ and $g$ and a functor $obj$ we have that $map(map(obj)(f))(g) = map(obj)(g \circ f)$
+		\end{enumerate}
+	\end{block}
+	\pause[2]
+	We could test these laws through PBT ScalaCheck.
+\end{frame}
+
+\begin{frame}[fragile]{Functors - Implementation (1)}	
+	We'll use type classes to implement functors.
+	
+	Functors can be represented with the following interface
+\begin{lstlisting}[language=scala]
+trait Functor[F[_]] {
+	def fmap[A, B](fa: F[A])(f: A => B): F[B]
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Functors - Implementation (2)}			
+Let's extend List and Option classes to be functors.
+\begin{lstlisting}[language=scala]
+implicit object listFunctor: Functor[List] {
+	def fmap[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
+}
+implicit object optionFunctor: Functor[Option] {
+	def fmap[A, B](fa: Option[A])(f: A => B): Option[B] = 
+	fa match {
+		case None => None
+		case Some(x) => Some(f(x))	
+	}
+}			
+\end{lstlisting}		
+	The first case is easy because List class already have map function
+	(to be honestly, Option have map method too).
+\end{frame}
+	
+\begin{frame}[fragile]{Functors - Implementation (3)}			
+	As before, we can create a generic method that apply map:
+\begin{lstlisting}[language=scala]
+def applyMap[F[_], A, B](a: F[A])(f: A => B)(implicit functor: Functor[F]): F[B] = {
+	functor.fmap(a)(f)
+}
+applyMap(List(1, 2, 3))(_ + 1) //List(2, 3, 4)
+applyMap(Some(1) : Option[Int])(_ + 1) // Some(2)
+applyMap(Set(true, true, false))(!_) // COMPILE ERROR
+\end{lstlisting}	
+	Through extension method we could also use applyMap as method in functors:
+\begin{lstlisting}[language=scala]
+implicit class FunctorMethod[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
+	def applyMap(f: A => B): F[B] = functor.fmap(a)(f)
+}
+List(1, 2, 3).applyMap(_ + 1) //List(2, 3, 4)
+(Some(1):Option[Int]).applyMap(_ + 1) // Some(2)
+Set(true, true, false).applyMap(!_) // COMPILE ERROR
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Why functors are useful?}
+	Functors allow to avoid boilerplate code.
+	Take Option type. 
+	Normally before applying a function on Option we should check if that value is either Some or None through pattern matching:
+\begin{lstlisting}[language=scala]
+val a : Option[Int] = Some(20)
+def f(a : Int) : Int = if (a % 2 == 0) a / 2 else a - 1
+val ris = (a match {
+	case None => None
+	case Some(b) => Some(f(b))
+}) //Some(10)
+\end{lstlisting}	
+	
+	Functors reduce code:
+\begin{lstlisting}[language=scala]
+val a : Option[Int] = Some(10)
+def f(a : Int) : Int = if (a % 2 == 0) a / 2 else a - 1
+val ris = a.applyMap(f) //Some(10)
+\end{lstlisting}
+\end{frame}

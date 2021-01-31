@@ -1,0 +1,88 @@
+\begin{frame}{Preamble: Type classes}
+	When we want to extend an existing class with a new interface 
+	(and so, possibly, with new functionalities) we have four choice:	
+	\begin{enumerate}[<+->]
+		\item Extend the class itself, but often we can't modify it (it could be taken from an API)
+		\item Create a new class that extends the original class and the new interface (not always possible)
+		\item Create a wrap class that contains the original class and extends the new interface
+		\item Using type classes
+	\end{enumerate}
+	\pause[4]
+	The last choice is a classical pattern of FP.			
+\end{frame}
+
+\begin{frame}[fragile]{Preamble: Type classes - Example (1)}
+	Let's present type classes with an example.
+	We have this scala interface
+\begin{lstlisting}[language=scala]
+trait Summable[T] {
+	def sumElements(list: List[T]): T
+}
+\end{lstlisting}
+	and we want that Int and String class implement it.
+
+	\pause
+
+	Of course we cannot change Int or String classes directly (they are into scala's library), so the first option is discarded.
+	
+	\pause
+	
+	We could create a new classes MyInt and MyStr that extends respectively Int and String but that classes are final, so we cannot work in 
+	this way.
+	
+	\pause
+	
+	Surely we can create a wrap classes MyInt and MyStr, but in this way we have now two definition of Int and of String and it could be messy.
+\end{frame}
+
+\begin{frame}[fragile]{Preamble: Type classes - Example (2)}	
+	Let's try type classes!
+	We start creating two implicit objects that implement the interface as follow:
+\begin{lstlisting}[language=scala]
+implicit object IntSummable extends Summable[Int] {
+	def sumElements(list: List[Int]): Int = list.sum
+}
+implicit object StringSummable extends Summable[String] {
+	def sumElements(list: List[String]): String = 
+		list.mkString("")
+}
+\end{lstlisting}
+
+	\pause
+
+	In this way we can now define a generic method that use sumElements
+\begin{lstlisting}[language=scala]
+def sumAll[T](l: List[T])(implicit summable: Summable[T]): T =
+	summable.sumElements(l)		
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Preamble: Type classes - Example (3)}
+	The advantage of this approach is that we can use sum method only with Int and String (all the other types with will create 
+	a compile error) and, thanks to implict, we don't have to pass summable object to sum.
+	
+\begin{lstlisting}[language=scala]
+sumAll(List(1,2,3)) // 6
+sumAll(List("Scala ", "is ", "awesome")) // "Scala is awesome"
+sumAll(List(true, true, false)) // COMPILE ERROR				
+\end{lstlisting}
+
+\end{frame}
+	
+\begin{frame}[fragile]{Preamble: Type classes - Example (4)}
+	
+	Through extension method we could also use sumAll as method in List of summable:
+\begin{lstlisting}[language=scala]
+implicit class ListSummable[A](l: List[A])(implicit summable: Summable[A]) {
+	def sumAll: A = summable.sumElements(l)
+}
+\end{lstlisting}	
+	
+	\pause
+	
+\begin{lstlisting}[language=scala]
+List(1,2,3).sumAll //6
+List("Scala ", "is ", "awesome").sumAll //"Scala is awesome"
+List(true, true, false).sumAll // COMPILE ERROR
+\end{lstlisting}
+\end{frame}

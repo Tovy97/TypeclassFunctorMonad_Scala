@@ -1,0 +1,83 @@
+\documentclass{beamer}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{subfiles}
+\usepackage{hyperref}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{mystyle}{
+	backgroundcolor=\color{backcolour},   
+	commentstyle=\color{codegreen},
+	keywordstyle=\color{magenta},
+	numberstyle=\tiny\color{codegray},
+	stringstyle=\color{codepurple},
+	basicstyle=\ttfamily\footnotesize,
+	breakatwhitespace=false,         
+	breaklines=true,                 
+	captionpos=b,                    
+	keepspaces=true,                 
+	numbers=left,                    
+	numbersep=5pt,                  
+	showspaces=false,                
+	showstringspaces=false,
+	showtabs=false,                  
+	tabsize=2
+}
+
+\lstset{style=mystyle}
+
+\usetheme{Madrid}
+
+\title[Monads in Functional Programming]{Monads in Functional Programming using Scala}
+\author{Marco Mantovani}
+
+\begin{document}	
+	\begin{frame}
+		\maketitle
+	\end{frame}
+	
+	\begin{frame}
+		\frametitle{Table of contents}
+		\tableofcontents
+	\end{frame}
+	
+	\section{Preamble: Type classes}
+	\subfile{sec/typeClasses.tex}
+	
+	\section{Functors}
+	\subfile{sec/functors.tex}
+			
+	\section{Monads}
+	\subfile{sec/monads.tex}
+
+	\section{Sitography  and Source codes}
+	\begin{frame}{Sitography  and Source codes}
+		Sitography  
+		\begin{itemize}
+			\item \href{https://blog.rockthejvm.com/why-are-typeclasses-useful/}{Rock the JVM - Type classes}
+			\item \href{https://blog.rockthejvm.com/what-the-functor/}{Rock the JVM - Functor}
+			\item \href{http://dcapwell.github.io/scala-tour/Functor.html}{dcapwell - Functor}
+			\item \href{https://adit.io/posts/2013-04-17-functors,\_applicatives,\_and\_monads\_in\_pictures.html}{adit.io - Functor \& Monad}
+		\end{itemize}
+	
+		Source codes
+		\begin{itemize}
+			\item Scala sources are available at \href{https://github.com/Tovy97/TypeclassFunctorMonad\_Scala}{my GitHub}.
+		\end{itemize}
+	\end{frame}
+
+	\begin{frame}{The end}	
+		\begin{center}
+			Thanks!
+		\end{center}
+	\end{frame}
+\end{document}

@@ -1,0 +1,111 @@
+\begin{frame}[fragile]{Monads}
+	Again, let's start from bind (also called flatMap) and unit methods:
+\begin{lstlisting}[language=scala]
+def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
+def unit[A](a : A) : M[A]
+\end{lstlisting}
+	\begin{block}{Definition}
+		Every class that have bind and unit methods above which respect the following rules is a monad:
+		\begin{enumerate}[<+->]
+			\item \textbf{Left identity:}  given a function $f$ and an object $obj$ we have that $bind(unit(obj))(f) = f(obj)$.
+			\item \textbf{Right identity:} given a monad $obj$ we have that $bind(obj)(unit) = obj$
+			\item \textbf{Associativity:} given two functions $f$ and $g$ and a monad $obj$ we have that 
+			$bind(bind(obj)(f))(g) = bind(obj)(x \Rightarrow flatMap(f(x))(g))$
+		\end{enumerate}
+	\end{block}
+	\pause[3]
+	We could test these laws through PBT ScalaCheck.
+\end{frame}
+
+\begin{frame}[fragile]{Monads - Implementation (1)}	
+	We'll use type classes to implement monads.
+	
+	Monads can be represented with the following interface
+\begin{lstlisting}[language=scala]
+trait Monad[M[_]] {
+	def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
+	def unit[A](a : A) : M[A]
+}			
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Monads - Implementation (2)}	
+	Let's extend List and Option classes to be monads.
+\begin{lstlisting}[language=scala]
+implicit object ListMonad extends Monad[List] {
+	override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] =
+		fa.flatMap(f)
+	override def unit[A](a: A): List[A] = List(a)
+}
+implicit object OptionMonad extends Monad[Option] {
+	override def bind[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
+		fa match {
+			case None => None
+			case Some(a) => f(a)
+		}
+	override def unit[A](a: A): Option[A] = Some(a)
+}		
+\end{lstlisting}		
+	The first case is easy because List class already has flatMap function
+	(to be honestly, Option has flatMap method too).
+\end{frame}
+
+\begin{frame}[fragile]{Monads - Implementation (3)}		
+	As before, we can create a generic method that apply bind:
+\begin{lstlisting}[language=scala]
+def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = {
+	monad.bind(a)(f)
+}
+bind(List(1,2,3))((x : Int) => List(x + 1)) //List(2, 3, 4)
+bind(Some(1) : Option[Int])((x : Int) => Some(x + 1)) // Some(2)
+bind(Set(true, true, false))((x : Boolean) => Set(!x)) // COMPILE ERROR
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Monads - Implementation (4)}	
+	Through extension method we could also use bind as method in monads:
+\begin{lstlisting}[language=scala]
+implicit class MonadMethods[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
+	def bind(f: A => M[B]): M[B] = monad.bind(a)(f)
+	def unit : A => M[A] = monad.unit
+}
+List(1,2,3).bind((x : Int) => List(x + 1)) //List(2, 3, 4)
+(Some(1) : Option[Int]).bind((x : Int) => Some(x + 1)) // Some(2)
+Set(true, true, false).applyBind((x : Boolean) => Set(!x)) // COMPILE ERROR	
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Differences between Functors and Monads (1)}
+	Why should we use monads instead of functor?
+	
+	Let's start from a simple example: concatenation of map function.
+\begin{lstlisting}[language=scala]
+val a : Option[Int] = Some(20)
+val temp = a.applyMap(_ + 1) //Some(2)
+temp.applyMap(_ + 1) // Some(3)
+\end{lstlisting}				
+	That works nicely. We start from an Option of Int, after the first step we have an Option of Int on which we apply again 
+	the same map function and we finally get an Option of Int.
+\end{frame}
+
+\begin{frame}[fragile]{Differences between Functors and Monads (2)}
+	But, let's try with a new function:
+\begin{lstlisting}[language=scala]
+val a : Option[Int] = Some(20)		
+def f(x:Int) : Option[Int] = if (x == 0) None else Some(2 / x)
+val temp1 = a.applyMap(f) // return Some(Some(0))
+temp1.applyMap(f)// COMPILE ERROR
+\end{lstlisting}	
+	Here we stuck because, after the first step, we get an Option of Option of Int. 
+	We could manage this problem and adjust the second function	to work with Option of Option of Int, 
+	but in this way we get an Option of Option of Option of Int and we could continue getting more and more layer of Option.
+	
+	\pause
+	
+	Here comes in help monads!
+\begin{lstlisting}[language=scala]
+val temp = a.bind(f) // return Some(0)
+temp.bind(f) //None
+\end{lstlisting}	
+	We could continue to apply bind endless, without change the return type.
+\end{frame}
