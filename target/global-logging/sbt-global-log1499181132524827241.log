@@ -1,0 +1,105 @@
+[debug] > Exec(early(addDefaultCommands), None, None)
+[debug] > Exec(addDefaultCommands, None, None)
+[debug] > Exec(early(initialize), None, None)
+[debug] > Exec(initialize, None, None)
+[debug] > Exec(early(addPluginSbtFile="""C:\Users\tovy9\AppData\Local\Temp\idea.sbt"""), None, None)
+[debug] > Exec(addPluginSbtFile="""C:\Users\tovy9\AppData\Local\Temp\idea.sbt""", None, None)
+[debug] > Exec(boot, None, None)
+[debug] > Exec(writeSbtVersion, None, None)
+[debug] > Exec(reload, None, None)
+[debug] > Exec(sbtStashOnFailure, None, None)
+[debug] > Exec(onFailure loadFailed, None, None)
+[debug] > Exec(loadp, None, None)
+[info] welcome to sbt 1.4.7 (Oracle Corporation Java 1.8.0_231)
+[debug]       Load.loadUnit: plugins took 100.5549ms
+[debug]       Load.loadUnit: defsScala took 0.3366ms
+[debug] [Loading] Scanning directory C:\Users\tovy9\.sbt\1.0\plugins
+[debug]         Load.loadUnit: mkEval took 6.4586ms
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\tovy9\.sbt\1.0\plugins, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin))), Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin)))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 21.3869 ms
+[info] loading settings for project global-plugins from idea.sbt ...
+[debug]           Load.resolveProject(global-plugins) took 48.4492ms
+[debug]         Load.loadTransitive: finalizeProject(Project(id global-plugins, base: C:\Users\tovy9\.sbt\1.0\plugins, plugins: List(<none>))) took 105.1057ms
+[debug] [Loading] Done in C:\Users\tovy9\.sbt\1.0\plugins, returning: (global-plugins)
+[debug]       Load.loadUnit: loadedProjectsRaw took 211.2164ms
+[debug]       Load.loadUnit: cleanEvalClasses took 6.8701ms
+[debug]     Load.loadUnit(file:/C:/Users/tovy9/.sbt/1.0/plugins/, ...) took 326.5645ms
+[debug]   Load.apply: load took 499.0892ms
+[debug]   Load.apply: resolveProjects took 4.8608ms
+[debug]   Load.apply: finalTransforms took 71.545ms
+[debug]   Load.apply: config.delegates took 12.0588ms
+[debug]   Load.apply: Def.make(settings)... took 1032.0615ms
+[debug]   Load.apply: structureIndex took 135.7526ms
+[debug]   Load.apply: mkStreams took 1.7253ms
+[info] loading global plugins from C:\Users\tovy9\.sbt\1.0\plugins
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[debug] Load.defaultLoad until apply took 4145.4325ms
+[debug]           Load.loadUnit: plugins took 31.9207ms
+[debug]           Load.loadUnit: defsScala took 0.0026ms
+[debug] [Loading] Scanning directory C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad\project
+[debug]             Load.loadUnit: mkEval took 2.5025ms
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad\project, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin))), Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin)))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.MiniDependencyTreePlugin,sbt.plugins.JUnitXmlReportPlugin,sbt.plugins.SemanticdbPlugin)
+[debug] Plugins.deducer#function took 3.873 ms
+[info] loading settings for project typeclassfunctormonad-build from idea.sbt ...
+[debug]               Load.resolveProject(typeclassfunctormonad-build) took 3.7548ms
+[debug]             Load.loadTransitive: finalizeProject(Project(id typeclassfunctormonad-build, base: C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad\project, plugins: List(<none>))) took 8.2241ms
+[debug] [Loading] Done in C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad\project, returning: (typeclassfunctormonad-build)
+[debug]           Load.loadUnit: loadedProjectsRaw took 3102.2721ms
+[debug]           Load.loadUnit: cleanEvalClasses took 4.3374ms
+[debug]         Load.loadUnit(file:/C:/Users/tovy9/Documents/IdeaProjects/Scala/TypeClassFunctorMonad/project/, ...) took 3140.2845ms
+[debug]       Load.apply: load took 3141.8128ms
+[debug]       Load.apply: resolveProjects took 0.1463ms
+[debug]       Load.apply: finalTransforms took 13.0054ms
+[debug]       Load.apply: config.delegates took 0.3629ms
+[debug]       Load.apply: Def.make(settings)... took 132.2999ms
+[debug]       Load.apply: structureIndex took 76.9535ms
+[debug]       Load.apply: mkStreams took 0.0028ms
+[info] loading project definition from C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad\project
+[debug] Running task... Cancel: Signal, check cycles: false, forcegc: true
+[debug]     Load.loadUnit: plugins took 4948.384ms
+[debug]     Load.loadUnit: defsScala took 0.0029ms
+[debug] [Loading] Scanning directory C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad
+[debug]       Load.loadUnit: mkEval took 0.2558ms
+[debug] [Loading] Found non-root projects 
+[debug] [Loading] Done in C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad, returning: ()
+[debug] deducing auto plugins based on known facts Set(Atom(sbt.plugins.CorePlugin)) and clauses Clauses(List(Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.ScriptedPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.SbtPlugin),Set(Atom(sbt.ScriptedPlugin))), Clause(Atom(sbt.plugins.SemanticdbPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JUnitXmlReportPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.MiniDependencyTreePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(org.jetbrains.sbt.StructurePlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(org.jetbrains.sbt.IdeaShellPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(org.jetbrains.sbt.indices.SbtIntellijIndicesPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.IvyPlugin))), Clause(Atom(sbt.plugins.IvyPlugin),Set(Atom(sbt.plugins.JvmPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.SemanticdbPlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.JUnitXmlReportPlugin))), Clause(Atom(sbt.plugins.CorePlugin),Set(Atom(sbt.plugins.Giter8TemplatePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(sbt.plugins.MiniDependencyTreePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(org.jetbrains.sbt.StructurePlugin))), Clause(Atom(sbt.plugins.JvmPlugin),Set(Atom(org.jetbrains.sbt.IdeaShellPlugin))), Clause(And(Set(Atom(sbt.plugins.CorePlugin), Atom(sbt.plugins.JvmPlugin))),Set(Atom(org.jetbrains.sbt.indices.SbtIntellijIndicesPlugin)))))
+[debug]   :: deduced result: Matched(sbt.plugins.CorePlugin,sbt.plugins.Giter8TemplatePlugin,sbt.plugins.IvyPlugin,sbt.plugins.JvmPlugin,sbt.plugins.SemanticdbPlugin,org.jetbrains.sbt.indices.SbtIntellijIndicesPlugin,sbt.plugins.JUnitXmlReportPlugin,org.jetbrains.sbt.IdeaShellPlugin,org.jetbrains.sbt.StructurePlugin,sbt.plugins.MiniDependencyTreePlugin)
+[debug] Plugins.deducer#function took 2.2324 ms
+[info] loading settings for project typeclassfunctormonad from build.sbt ...
+[debug]         Load.resolveProject(typeclassfunctormonad) took 34.2439ms
+[debug]       Load.loadTransitive: finalizeProject(Project(id typeclassfunctormonad, base: C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad, plugins: List(<none>))) took 37.9825ms
+[debug] [Loading] Done in C:\Users\tovy9\Documents\IdeaProjects\Scala\TypeClassFunctorMonad, returning: (typeclassfunctormonad)
+[debug]     Load.loadUnit: loadedProjectsRaw took 1694.6287ms
+[debug]     Load.loadUnit: cleanEvalClasses took 16.5263ms
+[debug]   Load.loadUnit(file:/C:/Users/tovy9/Documents/IdeaProjects/Scala/TypeClassFunctorMonad/, ...) took 6660.2037ms
+[debug] Load.apply: load took 6661.9012ms
+[debug] Load.apply: resolveProjects took 0.776ms
+[debug] Load.apply: finalTransforms took 33.1323ms
+[debug] Load.apply: config.delegates took 0.3361ms
+[debug] Load.apply: Def.make(settings)... took 96.0998ms
+[debug] Load.apply: structureIndex took 31.7796ms
+[debug] Load.apply: mkStreams took 0.0026ms
+[info] set current project to FunctorsAndMonads (in build file:/C:/Users/tovy9/Documents/IdeaProjects/Scala/TypeClassFunctorMonad/)
+[debug] > Exec(sbtPopOnFailure, None, None)
+[debug] > Exec(resumeFromFailure, None, None)
+[debug] > Exec(notifyUsersAboutShell, None, None)
+[debug] > Exec(iflast shell, None, None)
+[debug] > Exec(; set ideaPort in Global := 57423 ; idea-shell, None, None)
+[debug] > Exec(set ideaPort in Global := 57423, None, None)
+[info] Defining Global / ideaPort
+[info] The new value will be used by Compile / compile, Test / compile
+[debug] Defining 
+[debug] 	Global / ideaPort
+[debug] 
+[debug] The new value will be used by 
+[debug] 	Compile / compile
+[debug] 	Test / compile
+[info] Reapplying settings...
+[info] set current project to FunctorsAndMonads (in build file:/C:/Users/tovy9/Documents/IdeaProjects/Scala/TypeClassFunctorMonad/)
+[debug] > Exec(idea-shell, None, None)
