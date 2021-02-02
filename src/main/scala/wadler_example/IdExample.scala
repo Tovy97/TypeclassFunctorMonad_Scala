@@ -25,8 +25,8 @@ object IdExample {
     implicit val f: (Int, Int, Term) => Id[Int] = (a: Int, b: Int, _) => Id(a / b)
     implicit val g: (Int, Term) => Id[Int] = (a: Int, _) => Id(a)
     try {
-      println(Id(answer).bind(eval[Id]))
-      println(Id(error).bind(eval[Id]))
+      println(IdentityMonad.unit(answer).bind(eval[Id]))
+      println(IdentityMonad.unit(error).bind(eval[Id]))
     } catch {
       case _: Throwable =>
     }
