@@ -16,9 +16,9 @@ object WadlerMain extends App {
   case class Constant(c: Int) extends Term
   case class Div(t1: Term, t2: Term) extends Term
 
-  IdExample_TC.example
-  ExceptionExample_TC.example
-  StateExample_TC.example
-  IOExample_TC.example
+  IdExample.example
+  ExceptionExample.example
+  StateExample.example
+  IOExample.example
 }
 

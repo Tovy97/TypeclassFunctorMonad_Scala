@@ -3,7 +3,20 @@ package wadler_example
 import seminar_codes.MonadMain.{Monad, ToMonad}
 import wadler_example.WadlerMain._
 
-object ExceptionExample_TC {
+object ExceptionExample {
+
+  sealed trait RaiseReturn[A]
+  case class Return[A](ris: A) extends RaiseReturn[A]
+  case class Raise[A](e: String) extends RaiseReturn[A]
+
+  implicit object RaiseReturnMonad extends Monad[RaiseReturn] {
+    override def bind[A, B](fa: RaiseReturn[A])(f: A => RaiseReturn[B]): RaiseReturn[B] = fa match {
+      case Raise(e) => Raise(e)
+      case Return(a) => f(a)
+    }
+
+    override def unit[A](a: A): RaiseReturn[A] = Return(a)
+  }
 
   lazy val withoutMonads: Unit = {
     println("Without monads")
@@ -41,23 +54,5 @@ object ExceptionExample_TC {
     println("\nVariation one - Exception")
     withoutMonads
     withMonads
-  }
-
-  sealed trait RaiseReturn[A]
-  case class Return[A](ris: A) extends RaiseReturn[A]
-  case class Raise[A](e: String) extends RaiseReturn[A]
-
-  implicit object RaiseReturnMonad extends Monad[RaiseReturn] {
-    override def bind[A, B](fa: RaiseReturn[A])(f: A => RaiseReturn[B]): RaiseReturn[B] = fa match {
-      case Raise(e) => Raise(e)
-      case Return(a) => f(a)
-    }
-
-    override def unit[A](a: A): RaiseReturn[A] = Return(a)
-
-    override def map[A, B](fa: RaiseReturn[A])(f: A => B): RaiseReturn[B] = fa match {
-      case Raise(e) => Raise(e)
-      case Return(a) => Return(f(a))
-    }
   }
 }

@@ -3,7 +3,17 @@ package wadler_example
 import seminar_codes.MonadMain.{Monad, ToMonad}
 import wadler_example.WadlerMain._
 
-object IdExample_TC {
+object IdExample {
+
+  case class Id[A](a: A)
+
+  implicit object IdentityMonad extends Monad[Id] {
+    override def bind[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = fa match {
+      case Id(a) => f(a)
+    }
+
+    override def unit[A](a: A): Id[A] = Id(a)
+  }
 
   lazy val withoutMonads: Unit = {
     println("Without monads")
@@ -35,19 +45,5 @@ object IdExample_TC {
     println("Variation zero - Id")
     withoutMonads
     withMonads
-  }
-
-  case class Id[A](a: A)
-
-  implicit object IdentityMonad extends Monad[Id] {
-    override def bind[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = fa match {
-      case Id(a) => f(a)
-    }
-
-    override def unit[A](a: A): Id[A] = Id(a)
-
-    override def map[A, B](fa: Id[A])(f: A => B): Id[B] = fa match {
-      case Id(a) => Id(f(a))
-    }
   }
 }

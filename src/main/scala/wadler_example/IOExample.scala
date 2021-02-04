@@ -3,22 +3,22 @@ package wadler_example
 import seminar_codes.MonadMain.{Monad, ToMonad}
 import wadler_example.WadlerMain._
 
-object IOExample_TC {
+object IOExample {
 
-  implicit object IOMonad extends Monad[IO] {
-    override def bind[A, B](fa: IO[A])(f: A => IO[B]): IO[B] = {
-      val IO(x, a) = fa
-      val IO(y, b) = f(a)
-      IO(x + y, b)
+  trait IO[O, A] {
+    val output : O
+    val a : A
+  }
+  case class IOStr[A](output: String, a: A) extends IO[String, A]
+
+  implicit object IOMonad extends Monad[IOStr] {
+    override def bind[A, B](fa: IOStr[A])(f: A => IOStr[B]): IOStr[B] = {
+      val IOStr(x, a) = fa
+      val IOStr(y, b) = f(a)
+      IOStr(x + y, b)
     }
 
-    override def unit[A](a: A): IO[A] = IO("", a)
-
-    override def map[A, B](fa: IO[A])(f: A => B): IO[B] = {
-      val IO(x, a) = fa
-      val b = f(a)
-      IO(x, b)
-    }
+    override def unit[A](a: A): IOStr[A] = IOStr("", a)
   }
 
   lazy val withoutMonads: Unit = {
@@ -41,12 +41,12 @@ object IOExample_TC {
   }
   lazy val withMonads: Unit = {
     println("With monads")
-    val out = (x: String) => IO(x, ())
-    implicit val f: (Int, Int, Term) => IO[Int] = (a: Int, b: Int, e: Term) => out(line(e, a / b)).bind(_ => IOMonad.unit(a / b))
-    implicit val g: (Int, Term) => IO[Int] = (a: Int, e: Term) => out(line(e, a)).bind(_ => IOMonad.unit(a))
+    val out = (x: String) => IOStr(x, ())
+    implicit val f: (Int, Int, Term) => IOStr[Int] = (a: Int, b: Int, e: Term) => out(line(e, a / b)).bind(_ => IOMonad.unit(a / b))
+    implicit val g: (Int, Term) => IOStr[Int] = (a: Int, e: Term) => out(line(e, a)).bind(_ => IOMonad.unit(a))
     try {
-      println(IOMonad.unit(answer).bind(eval[IO]).Output)
-      println(IOMonad.unit(error).bind(eval[IO]).Output)
+      println(IOMonad.unit(answer).bind(eval[IOStr]).output)
+      println(IOMonad.unit(error).bind(eval[IOStr]).output)
     } catch {
       case _: Throwable =>
     }
@@ -58,7 +58,4 @@ object IOExample_TC {
   }
 
   def line(t: Term, a: Int): String = "eval(" + t + ") <= " + a + "\n"
-
-  case class IO[A](Output: String, a: A)
-
 }
