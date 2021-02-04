@@ -1,6 +1,6 @@
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
-import seminar_codes.MonadMain._
+import seminar_codes.MonadMain.{ListMonad, OptionMonad, bind, ToMonad}
 
 object MonadLaws extends Properties("MonadLaws") {
 

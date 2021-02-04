@@ -1,6 +1,6 @@
 package wadler_example
 
-import seminar_codes.MonadMain.{Monad, MonadMethods}
+import seminar_codes.MonadMain.{Monad, ToMonad}
 
 object WadlerMain extends App {
 
@@ -16,9 +16,9 @@ object WadlerMain extends App {
   case class Constant(c: Int) extends Term
   case class Div(t1: Term, t2: Term) extends Term
 
-  IdExample.example
-  ExceptionExample.example
-  StateExample.example
-  IOExample.example
+  IdExample_TC.example
+  ExceptionExample_TC.example
+  StateExample_TC.example
+  IOExample_TC.example
 }
 

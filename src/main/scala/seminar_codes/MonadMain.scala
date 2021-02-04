@@ -1,11 +1,35 @@
 package seminar_codes
 
-import seminar_codes.FunctorMain._
+import FunctorMain.Functor
 
 object MonadMain extends App {
 
-  val a: Option[Int] = Some(20)
+  //Monad Type
+  trait Monad[M[_]] extends Functor[M]{
+    def bind[A, B](fa: M[A])(f: A => M[B]): M[B] //also called flatMap
 
+    def unit[A](a: A): M[A] //also called apply
+
+    override def map[A, B](fa: M[A])(f: A => B): M[B] = {
+      bind(fa)(a => unit(f(a)))
+    }
+
+    override def join[A](ma: M[M[A]]): M[A] = { //also called flatten
+      bind(ma)(m => m)
+    }
+  }
+
+  implicit class ToMonad[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
+    def bind(f: A => M[B]): M[B] = monad.bind(a)(f)
+
+    def applyMap(f: A => B): M[B] = monad.map(a)(f)
+
+    lazy val unit: A => M[A] = monad.unit
+  }
+
+  def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = monad.bind(a)(f)
+
+  //Monads definition
   implicit object ListMonad extends Monad[List] {
     override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] =
       fa.flatMap(f)
@@ -23,13 +47,9 @@ object MonadMain extends App {
     override def unit[A](a: A): Option[A] = Some(a)
   }
 
-  val temp = a.applyMap(_ + 1)
+  //EXAMPLES
 
-  implicit class MonadMethods[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
-    def bind(f: A => M[B]): M[B] = monad.bind(a)(f)
-
-    def unit: A => M[A] = monad.unit
-  }
+  val a: Option[Int] = Some(20)
 
   println(bind(List(1, 2, 3))((x: Int) => List(x + 1))) //List(2, 3, 4)
   println(bind(Some(1): Option[Int])((x: Int) => Some(x + 1))) // Some(2)
@@ -40,29 +60,25 @@ object MonadMain extends App {
   //println(Set(true, true, false).applyBind((x : Boolean) => Set(!x))) // COMPILE ERROR
 
   println("---")
-  val temp1 = a.applyMap(f)
-  //println(temp1.applyMap(f))
-  val temp2 = a.bind(f)
-  println(temp)
-  println(temp.applyMap(_ + 1))
 
-  println("---")
-
-  def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = {
-    monad.bind(a)(f)
-  }
+  //FUNCTORS VS MONADS
 
   def f(x: Int): Option[Int] = if (x == 0) None else Some(2 / x)
 
+  val temp = a.applyMap(_ + 1) //Some(21)
+  println(temp)
+  println(temp.applyMap(_ + 1)) //Some(22)
+
+  println("---")
+
+  val temp1 = a.applyMap(f) //Some(Some(0))
+  val temp2 = a.bind(f)   //Some(0)
+
   println(temp1)
-
-  trait Monad[M[_]] {
-    def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
-
-    def unit[A](a: A): M[A]
-  }
-
   println(temp2)
-  println(temp2.bind(f))
+
+  //println(temp1.applyMap(f)) //COMPILE ERROR
+
+  println(temp2.bind(f)) // None
 
 }

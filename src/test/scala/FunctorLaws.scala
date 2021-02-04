@@ -1,6 +1,6 @@
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
-import seminar_codes.FunctorMain._
+import seminar_codes.FunctorMain.{applyMap, toFunctor1}
 
 object FunctorLaws extends Properties("FunctorLaws") {
   property("identity - List EM") = forAll { (a: List[Int]) =>
