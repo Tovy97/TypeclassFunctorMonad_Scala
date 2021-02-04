@@ -6,7 +6,7 @@ object MonadLaws extends Properties("MonadLaws") {
 
   //LIST
   property("left identity - List EM") = forAll { (a: Int, f: Int => List[Int]) =>
-    List[Int]().unit(a).bind(f) == f(a)
+    ListMonad.unit(a).bind(f) == f(a)
   }
 
   property("left identity - List def") = forAll { (a: Int, f: Int => List[Int]) =>

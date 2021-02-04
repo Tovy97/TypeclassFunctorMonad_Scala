@@ -6,25 +6,32 @@ object MonadTransformerMain extends App {
 
   //Transformer Type
   trait Transformer[M1[_], M2[_]] {
-    def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]]
-    def unit[A](a : A) : M1[M2[A]]
     def bind[A, B](fa: M1[M2[A]])(f: A => M1[M2[B]]): M1[M2[B]]
+    def unit[A](a : A) : M1[M2[A]]
     def lift[A](fa : M1[A]): M1[M2[A]]
+    def join[A](fa : M1[M2[M1[M2[A]]]]) : M1[M2[A]] = {
+      bind(fa)(m => m)
+    }
+    def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]] = {
+      bind(fa)(a => unit(f(a)))
+    }
   }
 
-  implicit class TransformerMethods[M1[_], M2[_], A, B](a: M1[M2[A]])(implicit transformer: Transformer[M1, M2]) {
-    lazy val applyUnit: A => M1[M2[A]] = transformer.unit
+  implicit class ToTransformer1[M1[_], M2[_], A, B](a: M1[M2[A]])(implicit transformer: Transformer[M1, M2]) {
+    lazy val applyUnitT: A => M1[M2[A]] = transformer.unit
     def applyMapT(f: A => B): M1[M2[B]] = transformer.map(a)(f)
     def applyBindT(f: A => M1[M2[B]]): M1[M2[B]] = transformer.bind(a)(f)
-    def applyLift(fa : M1[A]): M1[M2[A]] = transformer.lift(fa)
+  }
+  implicit class ToTransformer2[M1[_], M2[_], A, B](fa : M1[A])(implicit transformer: Transformer[M1, M2]) {
+    lazy val applyLiftT: M1[M2[A]] = transformer.lift(fa)
+  }
+  implicit class ToTransformer3[M1[_], M2[_], A, B](fa : M1[M2[M1[M2[A]]]])(implicit transformer: Transformer[M1, M2]) {
+    lazy val applyJoinT: M1[M2[A]] = transformer.join(fa)
   }
 
   //Transformer definition
   trait OptionTransformer[M1[_]] extends Transformer[M1, Option]
   implicit object ListOptionTransformer extends OptionTransformer[List] {
-    override def map[A, B](fa: List[Option[A]])(f: A => B): List[Option[B]] =
-      fa.applyMap(opt => opt.applyMap(f))
-
     override def bind[A, B](fa: List[Option[A]])(f: A => List[Option[B]]): List[Option[B]]=
       fa.bind {
         case Some(a) => f(a)
@@ -39,9 +46,6 @@ object MonadTransformerMain extends App {
 
   trait ListTransformer[M1[_]] extends Transformer[M1, List]
   implicit object OptionListTransformer extends ListTransformer[Option] {
-    override def map[A, B](fa: Option[List[A]])(f: A => B): Option[List[B]] =
-      fa.applyMap(list => list.applyMap(f))
-
     override def bind[A, B](fa: Option[List[A]])(f: A => Option[List[B]]): Option[List[B]] =
       fa.bind {
         case Nil => Some(Nil)
@@ -56,10 +60,16 @@ object MonadTransformerMain extends App {
 
   // EXAMPLES
 
-  val l : List[Option[Int]] = ListOptionTransformer.lift(List(1, 2, 3)) //List(Some(1), Some(2), Some(3))
+  val l : List[Option[Int]] = List(1, 2, 3).applyLiftT  //List(Some(1), Some(2), Some(3))
   val l0 : List[Option[Int]] = List(Some(1), None, Some(3))
   val l1: List[Option[Int]] = List(None)
   val o : Option[List[Int]] = Some(List(1, 2, 3))
+
+  val temp: List[Option[List[Option[Int]]]] = l.applyMapT(x => List(Some(x + 1)))
+  println(l.applyBindT(x => List(Some(x + 1))) == temp.applyJoinT)
+  println(l.applyBindT(x => List(Some(x + 1))) == ListOptionTransformer.join(l.applyMapT(x => List(Some(x + 1)))))
+
+  println
 
   println(l1.applyMapT(_ + 1))
 
