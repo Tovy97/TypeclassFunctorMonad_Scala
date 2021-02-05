@@ -1,8 +1,6 @@
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
-import seminar_codes.FunctorMain.toFunctor2
-import seminar_codes.MonadMain.{ListMonad, ToMonad}
-
+import seminar_codes.MonadMain.{ListMonad, ToMonad1, ToMonad2}
 
 object OtherMonadLawsTest extends Properties("OtherMonadLaws") {
 

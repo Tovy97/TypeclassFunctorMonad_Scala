@@ -1,6 +1,6 @@
 package seminar_codes
 
-import FunctorMain.{Functor, FunctorLaws, toFunctor2}
+import FunctorMain.{Functor, FunctorLaws}
 
 object MonadMain extends App {
 
@@ -14,17 +14,20 @@ object MonadMain extends App {
       bind(fa)(a => unit(f(a)))
     }
 
-    override def join[A](ma: M[M[A]]): M[A] = { //also called flatten
+    def join[A](ma: M[M[A]]): M[A] = { //also called flatten
       bind(ma)(m => m)
     }
   }
 
-  implicit class ToMonad[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
+  implicit class ToMonad1[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
     def applyBind(f: A => M[B]): M[B] = monad.bind(a)(f)
 
     def applyMap(f: A => B): M[B] = monad.map(a)(f)
 
     lazy val applyUnit: A => M[A] = monad.unit
+  }
+  implicit class ToMonad2[M[_], A](a: M[M[A]])(implicit monad: Monad[M]) {
+    lazy val applyJoin: M[A] = monad.join(a)
   }
 
   def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = monad.bind(a)(f)

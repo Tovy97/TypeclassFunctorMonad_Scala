@@ -5,14 +5,10 @@ object FunctorMain extends App {
   //Functors Type
   trait Functor[F[_]] {
     def map[A, B](fa: F[A])(f: A => B): F[B]
-    def join[A](fa : F[F[A]]) : F[A] //also called flatten
   }
 
-  implicit class toFunctor1[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
+  implicit class ToFunctor[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
     def applyMap(f: A => B): F[B] = functor.map(a)(f)
-  }
-  implicit class toFunctor2[F[_], A](a: F[F[A]])(implicit functor: Functor[F]) {
-    lazy val applyJoin: F[A] = functor.join(a)
   }
 
   class FunctorLaws[F[_], A](implicit functor: Functor[F]) {
@@ -29,15 +25,11 @@ object FunctorMain extends App {
 
   def applyMap[F[_], A, B](a: F[A])(f: A => B)(implicit functor: Functor[F]): F[B] =
     functor.map(a)(f)
-  def applyJoin[F[_], A](a: F[F[A]])(implicit functor: Functor[F]): F[A] =
-    functor.join(a)
 
   //Functors Definition
 
   implicit object ListFunctor extends Functor[List] {
     override def map[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
-
-    override def join[A](fa: List[List[A]]): List[A] = fa.flatten
   }
 
   implicit object OptionFunctor extends Functor[Option] {
@@ -46,11 +38,6 @@ object FunctorMain extends App {
         case None => None
         case Some(a) => Some(f(a))
       }
-
-    override def join[A](fa: Option[Option[A]]): Option[A] = fa match {
-      case None => None
-      case Some(x) => x
-    }
   }
 
   //------EXAMPLES------
