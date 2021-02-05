@@ -5,6 +5,14 @@ import seminar_codes.TransformerMain.{ListOptionT, TransformerLaws}
 object TransformerLawsTest extends Properties("TransformerLaws") {
 
   //ListOption
+  property("law 1 - ListOption") = forAll { (a: Int) =>
+    TransformerLaws().law1(a)
+  }
+
+  property("law 2 - ListOption") = forAll { (m: List[Int], f: Int => List[Int]) =>
+    TransformerLaws().law2(m)(f)
+  }
+
   property("left identity - ListOption") = forAll { (a: Int, f: Int => List[Option[Int]]) =>
     TransformerLaws().leftIdentity(a)(f)
   }
