@@ -1,0 +1,6 @@
+[debug] > Exec(compile -deprecation, None, None)
+[error] Expected whitespace character
+[error] Expected '/'
+[error] compile -deprecation
+[error]         ^
+[debug] > Exec(idea-shell, None, None)
