@@ -1,6 +1,6 @@
 package seminar_codes
 
-import FunctorMain.Functor
+import FunctorMain.{Functor, FunctorLaws, toFunctor2}
 
 object MonadMain extends App {
 
@@ -20,14 +20,26 @@ object MonadMain extends App {
   }
 
   implicit class ToMonad[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
-    def bind(f: A => M[B]): M[B] = monad.bind(a)(f)
+    def applyBind(f: A => M[B]): M[B] = monad.bind(a)(f)
 
     def applyMap(f: A => B): M[B] = monad.map(a)(f)
 
-    lazy val unit: A => M[A] = monad.unit
+    lazy val applyUnit: A => M[A] = monad.unit
   }
 
   def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = monad.bind(a)(f)
+
+  class MonadLaws[M[_], A](implicit monad: Monad[M]) extends FunctorLaws[M, A]{
+    def leftIdentity(a : A)(f : A => M[A]): Boolean = monad.unit(a).applyBind(f) == f(a)
+    def rightIdentity(t: M[A]) : Boolean = t.applyBind(t.applyUnit) == t
+    def associativity(t: M[A])(f : A => M[A], g : A => M[A]) : Boolean =
+      t.applyBind(f).applyBind(g) == t.applyBind((x: A) => f(x).applyBind(g))
+    def bindMapJoin(t: M[A])(f : A => M[A]) : Boolean =
+      t.applyBind(f) == t.applyMap(f).applyJoin
+  }
+  object MonadLaws {
+    def apply[M[_], A]()(implicit monad: Monad[M]) = new MonadLaws[M, A]
+  }
 
   //Monads definition
   implicit object ListMonad extends Monad[List] {
@@ -55,8 +67,8 @@ object MonadMain extends App {
   println(bind(Some(1): Option[Int])((x: Int) => Some(x + 1))) // Some(2)
   //println(bind(Set(true, true, false))((x : Boolean) => Set(!x))) // COMPILE ERROR
 
-  println(List(1, 2, 3).bind((x: Int) => List(x + 1))) //List(2, 3, 4)
-  println((Some(1): Option[Int]).bind((x: Int) => Some(x + 1))) // Some(2)
+  println(List(1, 2, 3).applyBind((x: Int) => List(x + 1))) //List(2, 3, 4)
+  println((Some(1): Option[Int]).applyBind((x: Int) => Some(x + 1))) // Some(2)
   //println(Set(true, true, false).applyBind((x : Boolean) => Set(!x))) // COMPILE ERROR
 
   println("---")
@@ -72,13 +84,13 @@ object MonadMain extends App {
   println("---")
 
   val temp1 = a.applyMap(f) //Some(Some(0))
-  val temp2 = a.bind(f)   //Some(0)
+  val temp2 = a.applyBind(f)   //Some(0)
 
   println(temp1)
   println(temp2)
 
   //println(temp1.applyMap(f)) //COMPILE ERROR
 
-  println(temp2.bind(f)) // None
+  println(temp2.applyBind(f)) // None
 
 }

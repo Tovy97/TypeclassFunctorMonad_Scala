@@ -44,8 +44,8 @@ object ExceptionExample {
     implicit val f: (Int, Int, Term) => RaiseReturn[Int] = (a: Int, b: Int, _) => if (b == 0) Raise("Divide by zero") else Return(a / b)
     implicit val g: (Int, Term) => RaiseReturn[Int] = (a: Int, _) => Return(a)
     try {
-      println(RaiseReturnMonad.unit(answer).bind(eval[RaiseReturn]))
-      println(RaiseReturnMonad.unit(error).bind(eval[RaiseReturn]))
+      println(RaiseReturnMonad.unit(answer).applyBind(eval[RaiseReturn]))
+      println(RaiseReturnMonad.unit(error).applyBind(eval[RaiseReturn]))
     } catch {
       case _: Throwable =>
     }

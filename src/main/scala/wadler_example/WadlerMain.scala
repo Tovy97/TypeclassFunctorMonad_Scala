@@ -9,7 +9,7 @@ object WadlerMain extends App {
 
   def eval[M[_]](e: Term)(implicit f: (Int, Int, Term) => M[Int], g: (Int, Term) => M[Int], monad: Monad[M]): M[Int] = e match {
     case Constant(a) => g(a, e)
-    case Div(t, u) => eval(t).bind((a: Int) => eval(u).bind((b: Int) => f(a, b, e)))
+    case Div(t, u) => eval(t).applyBind((a: Int) => eval(u).applyBind((b: Int) => f(a, b, e)))
   }
 
   sealed trait Term

@@ -11,7 +11,7 @@ object IOExample {
   }
   case class IOStr[A](output: String, a: A) extends IO[String, A]
 
-  implicit object IOMonad extends Monad[IOStr] {
+  implicit object IOStrMonad extends Monad[IOStr] {
     override def bind[A, B](fa: IOStr[A])(f: A => IOStr[B]): IOStr[B] = {
       val IOStr(x, a) = fa
       val IOStr(y, b) = f(a)
@@ -42,11 +42,11 @@ object IOExample {
   lazy val withMonads: Unit = {
     println("With monads")
     val out = (x: String) => IOStr(x, ())
-    implicit val f: (Int, Int, Term) => IOStr[Int] = (a: Int, b: Int, e: Term) => out(line(e, a / b)).bind(_ => IOMonad.unit(a / b))
-    implicit val g: (Int, Term) => IOStr[Int] = (a: Int, e: Term) => out(line(e, a)).bind(_ => IOMonad.unit(a))
+    implicit val f: (Int, Int, Term) => IOStr[Int] = (a: Int, b: Int, e: Term) => out(line(e, a / b)).applyBind(_ => IOStrMonad.unit(a / b))
+    implicit val g: (Int, Term) => IOStr[Int] = (a: Int, e: Term) => out(line(e, a)).applyBind(_ => IOStrMonad.unit(a))
     try {
-      println(IOMonad.unit(answer).bind(eval[IOStr]).output)
-      println(IOMonad.unit(error).bind(eval[IOStr]).output)
+      println(IOStrMonad.unit(answer).applyBind(eval[IOStr]).output)
+      println(IOStrMonad.unit(error).applyBind(eval[IOStr]).output)
     } catch {
       case _: Throwable =>
     }

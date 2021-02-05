@@ -4,7 +4,7 @@ import seminar_codes.FunctorMain.toFunctor2
 import seminar_codes.MonadMain.{ListMonad, ToMonad}
 
 
-object OtherMonadLaws extends Properties("OtherMonadLaws") {
+object OtherMonadLawsTest extends Properties("OtherMonadLaws") {
 
   def id[A]: A => A = (x:A) => x
   //LIST
@@ -31,9 +31,4 @@ object OtherMonadLaws extends Properties("OtherMonadLaws") {
   property("law7") = forAll { (mmma : List[List[List[Int]]]) =>
     mmma.applyMap(ListMonad.join).applyJoin == mmma.applyJoin.applyJoin
   }
-
-  property("law8") = forAll { (ma : List[Int], f: Int=>List[Int]) =>
-    ma.bind(f) == ListMonad.join(ma.applyMap(f))
-  }
-
 }

@@ -1,14 +1,17 @@
 package seminar_codes
 
-import MonadMain.ToMonad
+import MonadMain.{ListMonad, Monad}
 
-object MonadTransformerMain extends App {
+object TransformerMain extends App {
 
   //Transformer Type
   trait Transformer[M1[_], M2[_]] {
+    implicit def monadM1: Monad[M1]
+
     def bind[A, B](fa: M1[M2[A]])(f: A => M1[M2[B]]): M1[M2[B]]
     def unit[A](a : A) : M1[M2[A]]
     def lift[A](fa : M1[A]): M1[M2[A]]
+
     def join[A](fa : M1[M2[M1[M2[A]]]]) : M1[M2[A]] = {
       bind(fa)(m => m)
     }
@@ -29,33 +32,42 @@ object MonadTransformerMain extends App {
     lazy val applyJoinT: M1[M2[A]] = transformer.join(fa)
   }
 
-  //Transformer definition
-  trait OptionTransformer[M1[_]] extends Transformer[M1, Option]
-  implicit object ListOptionTransformer extends OptionTransformer[List] {
-    override def bind[A, B](fa: List[Option[A]])(f: A => List[Option[B]]): List[Option[B]]=
-      fa.bind {
-        case Some(a) => f(a)
-        case None => List(None)
-      }
-
-    override def unit[A](a: A): List[Option[A]] = List(Some(a))
-
-    override def lift[A](fa: List[A]): List[Option[A]] =
-      fa.bind(a => unit(a))
+  class TransformerLaws[M1[_], M2[_], A](implicit transformer: Transformer[M1, M2]) {
+    def leftIdentity(a : A)(f : A => M1[M2[A]]): Boolean = transformer.unit(a).applyBindT(f) == f(a)
+    def rightIdentity(t: M1[M2[A]]) : Boolean = t.applyBindT(t.applyUnitT) == t
+    def associativity(t: M1[M2[A]])(f : A => M1[M2[A]], g : A => M1[M2[A]]) : Boolean =
+      t.applyBindT(f).applyBindT(g) == t.applyBindT((x: A) => f(x).applyBindT(g))
+    def identity(fa : M1[M2[A]]): Boolean = {
+      def id (x: A) :A = x
+      fa.applyMapT(id) == fa
+    }
+    def composition(fa: M1[M2[A]])(f: A => A, g: A => A) : Boolean =
+      fa.applyMapT(f).applyMapT(g) == fa.applyMapT(g compose f)
+    def bindMapJoin(t: M1[M2[A]])(f : A => M1[M2[A]]) : Boolean =
+      t.applyBindT(f) == t.applyMapT(f).applyJoinT
+  }
+  object TransformerLaws {
+    def apply[M1[_], M2[_], A]()(implicit transformer: Transformer[M1, M2]) =
+      new TransformerLaws[M1,M2,A]
   }
 
-  trait ListTransformer[M1[_]] extends Transformer[M1, List]
-  implicit object OptionListTransformer extends ListTransformer[Option] {
-    override def bind[A, B](fa: Option[List[A]])(f: A => Option[List[B]]): Option[List[B]] =
-      fa.bind {
-        case Nil => Some(Nil)
-        case x => Some(x.flatMap(f).flatten)
+  //Transformer definition
+  trait OptionT[M1[_]] extends Transformer[M1, Option] {
+
+    override def bind[A, B](fa: M1[Option[A]])(f: A => M1[Option[B]]): M1[Option[B]]= {
+      monadM1.bind(fa) {
+        case Some(a) => f(a)
+        case None => monadM1.unit(None)
       }
+    }
 
-    override def unit[A](a: A): Option[List[A]] = Some(List(a))
+    override def unit[A](a: A): M1[Option[A]] = monadM1.unit(Some(a))
 
-    override def lift[A](fa: Option[A]): Option[List[A]] =
-      fa.bind(a => unit(a))
+    override def lift[A](fa: M1[A]): M1[Option[A]] =
+      monadM1.bind(fa)(a => unit(a))
+  }
+  implicit object ListOptionT extends OptionT[List] {
+    override implicit val monadM1: Monad[List] = implicitly
   }
 
   // EXAMPLES
@@ -63,11 +75,6 @@ object MonadTransformerMain extends App {
   val l : List[Option[Int]] = List(1, 2, 3).applyLiftT  //List(Some(1), Some(2), Some(3))
   val l0 : List[Option[Int]] = List(Some(1), None, Some(3))
   val l1: List[Option[Int]] = List(None)
-  val o : Option[List[Int]] = Some(List(1, 2, 3))
-
-  val temp: List[Option[List[Option[Int]]]] = l.applyMapT(x => List(Some(x + 1)))
-  println(l.applyBindT(x => List(Some(x + 1))) == temp.applyJoinT)
-  println(l.applyBindT(x => List(Some(x + 1))) == ListOptionTransformer.join(l.applyMapT(x => List(Some(x + 1)))))
 
   println
 
@@ -87,14 +94,4 @@ object MonadTransformerMain extends App {
 
   println(l0.applyMapT(_ + 1))
   println(l0.applyBindT(x => List(Some(x - 1), Some(x), Some(x + 1))))
-
-  println
-
-  println(o.applyMapT(_ + 1))
-  println(o.applyMapT(_ + 1).applyMapT(_ * 2))
-  println(o.applyMapT("str -> " + _ + " <-"))
-  println(o.applyBindT(x => Some(List(x - 1, x, x + 1))))
-  println(o.applyBindT(x => Some(List(x - 1, x, x + 1))).applyBindT(x => Some(List(x * 2))))
-  println(o.applyBindT(x => Some(List("s" + (x-1), "s"+x, "s"+(x + 1)))))
-  println(o.applyBindT(_ => None))
 }

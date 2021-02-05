@@ -12,7 +12,7 @@ object StateExample {
     def apply(x: Int): (A, Int) = func(x)
   }
 
-  implicit object StateMonad extends Monad[IntState] {
+  implicit object IntStateMonad extends Monad[IntState] {
     override def bind[A, B](fa: IntState[A])(f: A => IntState[B]): IntState[B] = {
       val function : Int => (B, Int) = (x: Int) => {
         val (a, y) = fa(x)
@@ -46,11 +46,11 @@ object StateExample {
   lazy val withMonads: Unit = {
     println("With monads")
     val tick = IntState((x: Int) => ((), x + 1))
-    implicit val f: (Int, Int, Term) => IntState[Int] = (a: Int, b: Int, _) => tick.bind(_ => StateMonad.unit(a / b))
-    implicit val g: (Int, Term) => IntState[Int] = (a: Int, _) => StateMonad.unit(a)
+    implicit val f: (Int, Int, Term) => IntState[Int] = (a: Int, b: Int, _) => tick.applyBind(_ => IntStateMonad.unit(a / b))
+    implicit val g: (Int, Term) => IntState[Int] = (a: Int, _) => IntStateMonad.unit(a)
     try {
-      println(StateMonad.unit(answer).bind(eval[IntState])(0))
-      println(StateMonad.unit(error).bind(eval[IntState])(0))
+      println(IntStateMonad.unit(answer).applyBind(eval[IntState])(0))
+      println(IntStateMonad.unit(error).applyBind(eval[IntState])(0))
     } catch {
       case _: Throwable =>
     }
