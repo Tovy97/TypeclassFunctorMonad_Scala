@@ -76,11 +76,11 @@ object TransformerMain extends App {
   val l0 : List[Option[Int]] = List(Some(1), None, Some(3))
   val l1: List[Option[Int]] = List(None)
 
-  println
+  println()
 
   println(l1.applyMapT(_ + 1))
 
-  println
+  println()
 
   println(l)
   println(l.applyMapT(_ + 1))
@@ -90,7 +90,7 @@ object TransformerMain extends App {
   println(l.applyBindT(_ => Nil))
   println(l.applyBindT(_ => List(None)))
 
-  println
+  println()
 
   println(l0.applyMapT(_ + 1))
   println(l0.applyBindT(x => List(Some(x - 1), Some(x), Some(x + 1))))
