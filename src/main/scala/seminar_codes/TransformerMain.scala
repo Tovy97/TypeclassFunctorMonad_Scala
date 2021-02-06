@@ -1,6 +1,6 @@
 package seminar_codes
 
-import MonadMain.{ListMonad, Monad}
+import MonadMain.{ListMonad, Monad, ToMonad1}
 
 object TransformerMain extends App {
 
@@ -63,8 +63,8 @@ object TransformerMain extends App {
 
     override def bind[A, B](fa: M1[Option[A]])(f: A => M1[Option[B]]): M1[Option[B]]= {
       monadM1.bind(fa) {
-        case Some(a) => f(a)
         case None => monadM1.unit(None)
+        case Some(a) => f(a)
       }
     }
 
@@ -101,4 +101,34 @@ object TransformerMain extends App {
 
   println(l0.applyMapT(_ + 1))
   println(l0.applyBindT(x => List(Some(x - 1), Some(x), Some(x + 1))))
+
+  println()
+
+  //Monad VS Transformer
+
+  //Functors compose
+  val v = List(Option(1),None,Option(3))
+  val f1 : Int => String = _ + "a"
+  println(v.applyMap(x => x.applyMap(f1)))
+
+  //Monads don't compose
+  val f2 : Int => List[Option[String]] = x => List(Some(x + "a"))
+  //println(v.applyBind(x => x.applyBind(f2)))
+  /*
+  type mismatch;
+   found   : Int => List[Option[String]]
+   required: Int => Option[?]
+  */
+  def helper[A,B](d : B)(f : A => B) : Option[A] => B = {
+    case None => d
+    case Some(y) => f(y)
+  }
+  val default : List[Option[String]] = ListMonad.unit(None)
+  println(v.applyBind(helper(default)(f2)))
+  println(v.applyBind {
+    case None => default
+    case Some(x) => f2(x)
+  })
+  //Transformer
+  println(v.applyBindT(f2))
 }
