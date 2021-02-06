@@ -1,66 +1,12 @@
 package seminar_codes
 
-import FunctorMain.{Functor, FunctorLaws}
+import implementation.monad.Monad
+import implementation.monad.MonadImplementation._
+import implementation.monad.MonadHelper._
 
 object MonadMain extends App {
 
-  //Monad Type
-  trait Monad[M[_]] extends Functor[M]{
-    def bind[A, B](fa: M[A])(f: A => M[B]): M[B] //also called flatMap
-
-    def unit[A](a: A): M[A] //also called apply
-
-    override def map[A, B](fa: M[A])(f: A => B): M[B] = {
-      bind(fa)(a => unit(f(a)))
-    }
-
-    def join[A](ma: M[M[A]]): M[A] = { //also called flatten
-      bind(ma)(m => m)
-    }
-  }
-
-  implicit class ToMonad1[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
-    def applyBind(f: A => M[B]): M[B] = monad.bind(a)(f)
-
-    def applyMap(f: A => B): M[B] = monad.map(a)(f)
-
-    lazy val applyUnit: A => M[A] = monad.unit
-  }
-  implicit class ToMonad2[M[_], A](a: M[M[A]])(implicit monad: Monad[M]) {
-    lazy val applyJoin: M[A] = monad.join(a)
-  }
-
   def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = monad.bind(a)(f)
-
-  class MonadLaws[M[_], A](implicit monad: Monad[M]) extends FunctorLaws[M, A]{
-    def leftIdentity(a : A)(f : A => M[A]): Boolean = monad.unit(a).applyBind(f) == f(a)
-    def rightIdentity(t: M[A]) : Boolean = t.applyBind(t.applyUnit) == t
-    def associativity(t: M[A])(f : A => M[A], g : A => M[A]) : Boolean =
-      t.applyBind(f).applyBind(g) == t.applyBind((x: A) => f(x).applyBind(g))
-    def bindMapJoin(t: M[A])(f : A => M[A]) : Boolean =
-      t.applyBind(f) == t.applyMap(f).applyJoin
-  }
-  object MonadLaws {
-    def apply[M[_], A]()(implicit monad: Monad[M]) = new MonadLaws[M, A]
-  }
-
-  //Monads definition
-  implicit object ListMonad extends Monad[List] {
-    override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] =
-      fa.flatMap(f)
-
-    override def unit[A](a: A): List[A] = List(a)
-  }
-
-  implicit object OptionMonad extends Monad[Option] {
-    override def bind[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
-      fa match {
-        case None => None
-        case Some(a) => f(a)
-      }
-
-    override def unit[A](a: A): Option[A] = Some(a)
-  }
 
   //EXAMPLES
 

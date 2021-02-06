@@ -1,6 +1,7 @@
 package wadler_example
 
-import seminar_codes.MonadMain.{Monad, ToMonad1}
+import seminar_codes.implementation.monad.MonadHelper._
+import seminar_codes.implementation.monad.MonadImplementation.IOStrMonad
 import wadler_example.WadlerMain._
 
 object IOExample {
@@ -11,15 +12,7 @@ object IOExample {
   }
   case class IOStr[A](output: String, a: A) extends IO[String, A]
 
-  implicit object IOStrMonad extends Monad[IOStr] {
-    override def bind[A, B](fa: IOStr[A])(f: A => IOStr[B]): IOStr[B] = {
-      val IOStr(x, a) = fa
-      val IOStr(y, b) = f(a)
-      IOStr(x + y, b)
-    }
 
-    override def unit[A](a: A): IOStr[A] = IOStr("", a)
-  }
 
   lazy val withoutMonads: Unit = {
     println("Without monads")

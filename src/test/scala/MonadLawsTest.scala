@@ -1,9 +1,10 @@
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
-import seminar_codes.MonadMain.{ListMonad, MonadLaws, OptionMonad}
-import wadler_example.IdExample.{Id, IdentityMonad}
-import wadler_example.ExceptionExample.{RaiseReturn, RaiseReturnMonad}
-import wadler_example.IOExample.{IOStr, IOStrMonad}
+import seminar_codes.implementation.monad.MonadImplementation._
+import seminar_codes.implementation.monad.MonadLaws
+import wadler_example.IdExample.Id
+import wadler_example.ExceptionExample.RaiseReturn
+import wadler_example.IOExample.IOStr
 //import wadler_example.StateExample.{IntState, IntStateMonad}
 
 object MonadLawsTest extends Properties("MonadLaws") {

@@ -1,6 +1,7 @@
 package wadler_example
 
-import seminar_codes.MonadMain.{Monad, ToMonad1}
+import seminar_codes.implementation.monad.MonadHelper._
+import seminar_codes.implementation.monad.MonadImplementation.IntStateMonad
 import wadler_example.WadlerMain._
 
 object StateExample {
@@ -10,19 +11,6 @@ object StateExample {
   }
   case class IntState[A](func: Int => (A, Int)) extends State[A, Int] {
     def apply(x: Int): (A, Int) = func(x)
-  }
-
-  implicit object IntStateMonad extends Monad[IntState] {
-    override def bind[A, B](fa: IntState[A])(f: A => IntState[B]): IntState[B] = {
-      val function : Int => (B, Int) = (x: Int) => {
-        val (a, y) = fa(x)
-        val (b, z) = f(a)(y)
-        (b, z)
-      }
-      IntState(function)
-    }
-
-    override def unit[A](a: A): IntState[A] = IntState((a, _))
   }
 
   lazy val withoutMonads: Unit = {

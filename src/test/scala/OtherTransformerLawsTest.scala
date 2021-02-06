@@ -1,6 +1,7 @@
 import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
-import seminar_codes.TransformerMain.{ListOptionT, ToTransformer1, ToTransformer3}
+import seminar_codes.implementation.transformer.TransformerHelper._
+import seminar_codes.implementation.transformer.TransformerImplementation.ListOptionT
 
 object OtherTransformerLawsTest extends Properties("OtherTransformerLaws") {
 

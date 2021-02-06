@@ -1,6 +1,7 @@
 package wadler_example
 
-import seminar_codes.MonadMain.{Monad, ToMonad1}
+import seminar_codes.implementation.monad.Monad
+import seminar_codes.implementation.monad.MonadHelper._
 
 object WadlerMain extends App {
 

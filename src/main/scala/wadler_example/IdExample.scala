@@ -1,19 +1,12 @@
 package wadler_example
 
-import seminar_codes.MonadMain.{Monad, ToMonad1}
+import seminar_codes.implementation.monad.MonadHelper._
+import seminar_codes.implementation.monad.MonadImplementation.IdentityMonad
 import wadler_example.WadlerMain._
 
 object IdExample {
 
   case class Id[A](a: A)
-
-  implicit object IdentityMonad extends Monad[Id] {
-    override def bind[A, B](fa: Id[A])(f: A => Id[B]): Id[B] = fa match {
-      case Id(a) => f(a)
-    }
-
-    override def unit[A](a: A): Id[A] = Id(a)
-  }
 
   lazy val withoutMonads: Unit = {
     println("Without monads")

@@ -1,44 +1,13 @@
 package seminar_codes
 
+import seminar_codes.implementation.functor.Functor
+import seminar_codes.implementation.functor.FunctorImplementation._
+import seminar_codes.implementation.functor.FunctorHelper._
+
 object FunctorMain extends App {
-
-  //Functors Type
-  trait Functor[F[_]] {
-    def map[A, B](fa: F[A])(f: A => B): F[B]
-  }
-
-  implicit class ToFunctor[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
-    def applyMap(f: A => B): F[B] = functor.map(a)(f)
-  }
-
-  class FunctorLaws[F[_], A](implicit functor: Functor[F]) {
-    def identity(fa : F[A]): Boolean = {
-      def id (x: A) :A = x
-      fa.applyMap(id) == fa
-    }
-    def composition(fa: F[A])(f: A => A, g: A => A) : Boolean =
-      fa.applyMap(f).applyMap(g) == fa.applyMap(g compose f)
-  }
-  object FunctorLaws {
-    def apply[F[_], A]()(implicit functor: Functor[F]) = new FunctorLaws[F, A]
-  }
 
   def applyMap[F[_], A, B](a: F[A])(f: A => B)(implicit functor: Functor[F]): F[B] =
     functor.map(a)(f)
-
-  //Functors Definition
-
-  implicit object ListFunctor extends Functor[List] {
-    override def map[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
-  }
-
-  implicit object OptionFunctor extends Functor[Option] {
-    override def map[A, B](fa: Option[A])(f: A => B): Option[B] =
-      fa match {
-        case None => None
-        case Some(a) => Some(f(a))
-      }
-  }
 
   //------EXAMPLES------
 
