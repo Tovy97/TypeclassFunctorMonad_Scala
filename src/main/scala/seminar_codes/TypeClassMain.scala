@@ -2,16 +2,16 @@ package seminar_codes
 
 object TypeClassMain extends App {
 
-  sealed trait Summable[T] {
-    def sumElements(list: List[T]): T
-  }
+  def sumAll[T](l: List[T])(implicit summable: Summable[T]): T =
+    summable.sumElements(l)
 
   implicit class ListSummable[A](l: List[A])(implicit summable: Summable[A]) {
     def sumAll: A = summable.sumElements(l)
   }
 
-  def sumAll[T](l: List[T])(implicit summable: Summable[T]): T =
-    summable.sumElements(l)
+  sealed trait Summable[T] {
+    def sumElements(list: List[T]): T
+  }
 
   implicit object IntSummable extends Summable[Int] {
     override def sumElements(list: List[Int]): Int = list.sum

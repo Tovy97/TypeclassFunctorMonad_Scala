@@ -6,14 +6,6 @@ import wadler_example.WadlerMain._
 
 object IOExample {
 
-  trait IO[O, A] {
-    val output : O
-    val a : A
-  }
-  case class IOStr[A](output: String, a: A) extends IO[String, A]
-
-
-
   lazy val withoutMonads: Unit = {
     println("Without monads")
 
@@ -51,4 +43,12 @@ object IOExample {
   }
 
   def line(t: Term, a: Int): String = "eval(" + t + ") <= " + a + "\n"
+
+  trait IO[O, A] {
+    val output: O
+    val a: A
+  }
+
+  case class IOStr[A](output: String, a: A) extends IO[String, A]
+
 }

@@ -1,9 +1,9 @@
 \begin{frame}{Introduction: Type classes}
 	When we want to extend an existing class with a new interface 
-	(and so, possibly, with new functionalities) we have four choices:	
+	(and so, possibly, with new functionalities) we have essentially four choices:	
 	\begin{enumerate}[<+->]
-		\item Extending the class itself, but often we can't modify it (it could be taken from an API)
-		\item Creating a new class that extends the original class and the new interface (not always possible)
+		\item Extending the class itself (not always possible, e.g. API classes)
+		\item Creating a new class that extends the original class and the new interface (not always possible, e.g. final classes)
 		\item Creating a wrapping class that contains the original class and extends the new interface
 		\item Using type classes
 	\end{enumerate}
@@ -23,7 +23,7 @@ trait Summable[T] {
 
 	\pause
 
-	Of course we cannot change Int or String classes directly (they are into scala's library), so the first option is discarded.
+	Of course we cannot change Int or String classes directly (they are into scala API), so the first option is discarded.
 	
 	\pause
 	
@@ -32,7 +32,8 @@ trait Summable[T] {
 	
 	\pause
 	
-	Surely we can create wrapping classes MyInt and MyStr, but in this way we have now two definitions of Int and of String and it could be messy.
+	Surely we can create wrapping classes MyInt and MyStr, but in this way we have now two definitions of Int and of String and 
+	it could be messy.
 \end{frame}
 
 \begin{frame}[fragile]{Introduction: Type classes - Example (2)}	
@@ -71,7 +72,7 @@ sumAll(List(true, true, false)) // COMPILE ERROR
 	
 \begin{frame}[fragile]{Introduction: Type classes - Example (4)}
 	
-	Through extension method we could also use sumAll as method in List of summable:
+	Through extension method we could also use sumAll as method in List of Int and List of String:
 \begin{lstlisting}[language=scala]
 implicit class ListSummable[A](l: List[A])(implicit summable: Summable[A]) {
 	def sumAll: A = summable.sumElements(l)

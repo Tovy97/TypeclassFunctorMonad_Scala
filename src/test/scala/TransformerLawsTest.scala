@@ -34,7 +34,7 @@ object TransformerLawsTest extends Properties("TransformerLaws") {
     TransformerLaws().composition(t)(f, g)
   }
 
-  property("bind = map + join - ListOption") = forAll { (t : List[Option[Int]], f: Int=>List[Option[Int]]) =>
+  property("bind = map + join - ListOption") = forAll { (t: List[Option[Int]], f: Int => List[Option[Int]]) =>
     TransformerLaws().bindMapJoin(t)(f)
   }
 }

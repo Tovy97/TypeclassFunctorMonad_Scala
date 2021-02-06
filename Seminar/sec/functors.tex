@@ -1,7 +1,7 @@
 \begin{frame}[fragile]{Functors}
 	Let's start with map function:
 \begin{lstlisting}[language=scala]
-def fmap[A, B](fa: F[A])(f: A => B): F[B]
+def map[A, B](fa: F[A])(f: A => B): F[B]
 \end{lstlisting}
 	\pause
 	\begin{block}{Definition}
@@ -10,9 +10,7 @@ def fmap[A, B](fa: F[A])(f: A => B): F[B]
 			\item \textbf{Identity:} given the identity function $id$ and a functor $obj$ we have that $map(obj)(id) = obj$.
 			\item \textbf{Composition:} given two functions $f$ and $g$ and a functor $obj$ we have that $map(map(obj)(f))(g) = map(obj)(g \circ f)$
 		\end{enumerate}
-	\end{block}
-	\pause[3]
-	We could test these laws through PBT ScalaCheck.
+	\end{block}	
 \end{frame}
 
 \begin{frame}[fragile]{Functors - Implementation (1)}	
@@ -21,19 +19,19 @@ def fmap[A, B](fa: F[A])(f: A => B): F[B]
 	Functors can be represented with the following interface
 \begin{lstlisting}[language=scala]
 trait Functor[F[_]] {
-	def fmap[A, B](fa: F[A])(f: A => B): F[B]
+	def map[A, B](fa: F[A])(f: A => B): F[B]
 }
 \end{lstlisting}
 \end{frame}
 
 \begin{frame}[fragile]{Functors - Implementation (2)}			
-Let's extend List and Option classes to be functors.
+	Let's create List and Option functors.
 \begin{lstlisting}[language=scala]
 implicit object listFunctor: Functor[List] {
-	def fmap[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
+	def map[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
 }
 implicit object optionFunctor: Functor[Option] {
-	def fmap[A, B](fa: Option[A])(f: A => B): Option[B] = 
+	def map[A, B](fa: Option[A])(f: A => B): Option[B] = 
 	fa match {
 		case None => None
 		case Some(x) => Some(f(x))	
@@ -48,7 +46,7 @@ implicit object optionFunctor: Functor[Option] {
 	As before, we can create a generic method that applies map:
 \begin{lstlisting}[language=scala]
 def applyMap[F[_], A, B](a: F[A])(f: A => B)(implicit functor: Functor[F]): F[B] = {
-	functor.fmap(a)(f)
+	functor.map(a)(f)
 }
 applyMap(List(1, 2, 3))(_ + 1) //List(2, 3, 4)
 applyMap(Some(1) : Option[Int])(_ + 1) // Some(2)
@@ -56,13 +54,26 @@ applyMap(Set(true, true, false))(!_) // COMPILE ERROR
 \end{lstlisting}	
 	Through extension method we could also use applyMap as method of functors:
 \begin{lstlisting}[language=scala]
-implicit class FunctorMethod[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
-	def applyMap(f: A => B): F[B] = functor.fmap(a)(f)
+implicit class ToFunctor[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
+	def applyMap(f: A => B): F[B] = functor.map(a)(f)
 }
 List(1, 2, 3).applyMap(_ + 1) //List(2, 3, 4)
 (Some(1):Option[Int]).applyMap(_ + 1) // Some(2)
 Set(true, true, false).applyMap(!_) // COMPILE ERROR
 \end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Functors Laws}
+	Functors laws are expressed in scala in this way:
+\begin{lstlisting}[language=scala]
+def identity(fa: F[A]): Boolean = {
+	def id(x: A): A = x	
+	fa.applyMap(id) == fa
+}
+def composition(fa: F[A])(f: A => A, g: A => A): Boolean =
+	fa.applyMap(f).applyMap(g) == fa.applyMap(g compose f)
+\end{lstlisting}	
+	We could test these laws through PBT ScalaCheck.
 \end{frame}
 
 \begin{frame}[fragile]{Why are functors useful?}

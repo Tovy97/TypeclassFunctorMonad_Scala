@@ -1,14 +1,10 @@
 package wadler_example
 
-import seminar_codes.implementation.monad.MonadImplementation.RaiseReturnMonad
 import seminar_codes.implementation.monad.MonadHelper._
+import seminar_codes.implementation.monad.MonadImplementation.RaiseReturnMonad
 import wadler_example.WadlerMain._
 
 object ExceptionExample {
-
-  sealed trait RaiseReturn[A]
-  case class Return[A](ris: A) extends RaiseReturn[A]
-  case class Raise[A](e: String) extends RaiseReturn[A]
 
   lazy val withoutMonads: Unit = {
     println("Without monads")
@@ -47,4 +43,11 @@ object ExceptionExample {
     withoutMonads
     withMonads
   }
+
+  sealed trait RaiseReturn[A]
+
+  case class Return[A](ris: A) extends RaiseReturn[A]
+
+  case class Raise[A](e: String) extends RaiseReturn[A]
+
 }

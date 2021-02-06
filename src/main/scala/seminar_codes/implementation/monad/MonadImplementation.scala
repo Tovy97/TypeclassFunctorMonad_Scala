@@ -6,6 +6,7 @@ import wadler_example.IdExample.Id
 import wadler_example.StateExample.IntState
 
 object MonadImplementation {
+
   implicit object ListMonad extends Monad[List] {
     override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] =
       fa.flatMap(f)
@@ -52,7 +53,7 @@ object MonadImplementation {
 
   implicit object IntStateMonad extends Monad[IntState] {
     override def bind[A, B](fa: IntState[A])(f: A => IntState[B]): IntState[B] = {
-      val function : Int => (B, Int) = (x: Int) => {
+      val function: Int => (B, Int) = (x: Int) => {
         val (a, y) = fa(x)
         val (b, z) = f(a)(y)
         (b, z)
@@ -62,4 +63,5 @@ object MonadImplementation {
 
     override def unit[A](a: A): IntState[A] = IntState((a, _))
   }
+
 }

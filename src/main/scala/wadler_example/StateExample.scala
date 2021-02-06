@@ -6,13 +6,6 @@ import wadler_example.WadlerMain._
 
 object StateExample {
 
-  trait State[A, S] {
-    val func: S => (A, S)
-  }
-  case class IntState[A](func: Int => (A, Int)) extends State[A, Int] {
-    def apply(x: Int): (A, Int) = func(x)
-  }
-
   lazy val withoutMonads: Unit = {
     println("Without monads")
 
@@ -48,4 +41,13 @@ object StateExample {
     withoutMonads
     withMonads
   }
+
+  trait State[A, S] {
+    val func: S => (A, S)
+  }
+
+  case class IntState[A](func: Int => (A, Int)) extends State[A, Int] {
+    def apply(x: Int): (A, Int) = func(x)
+  }
+
 }

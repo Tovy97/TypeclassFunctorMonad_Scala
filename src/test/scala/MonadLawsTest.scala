@@ -2,9 +2,9 @@ import org.scalacheck.Prop.forAll
 import org.scalacheck.Properties
 import seminar_codes.implementation.monad.MonadImplementation._
 import seminar_codes.implementation.monad.MonadLaws
-import wadler_example.IdExample.Id
 import wadler_example.ExceptionExample.RaiseReturn
 import wadler_example.IOExample.IOStr
+import wadler_example.IdExample.Id
 //import wadler_example.StateExample.{IntState, IntStateMonad}
 
 object MonadLawsTest extends Properties("MonadLaws") {
@@ -30,7 +30,7 @@ object MonadLawsTest extends Properties("MonadLaws") {
     MonadLaws()(ListMonad).composition(ma)(f, g)
   }
 
-  property("bind = map + join - List") = forAll { (ma : List[Int], f: Int=>List[Int]) =>
+  property("bind = map + join - List") = forAll { (ma: List[Int], f: Int => List[Int]) =>
     MonadLaws()(ListMonad).bindMapJoin(ma)(f)
   }
 
@@ -55,13 +55,14 @@ object MonadLawsTest extends Properties("MonadLaws") {
     MonadLaws()(OptionMonad).composition(ma)(f, g)
   }
 
-  property("bind = map + join - Option") = forAll { (ma : Option[Int], f: Int=>Option[Int]) =>
+  property("bind = map + join - Option") = forAll { (ma: Option[Int], f: Int => Option[Int]) =>
     MonadLaws()(OptionMonad).bindMapJoin(ma)(f)
   }
 
   //ID
   property("left identity - Id") = forAll { (a: Int, fT: Int => Int) =>
-    def f(x : Int) : Id[Int] = IdentityMonad.unit(fT(x))
+    def f(x: Int): Id[Int] = IdentityMonad.unit(fT(x))
+
     MonadLaws()(IdentityMonad).leftIdentity(a)(f)
   }
 
@@ -71,8 +72,10 @@ object MonadLawsTest extends Properties("MonadLaws") {
   }
 
   property("associativity - Id") = forAll { (mT: Int, fT: Int => Int, gT: Int => Int) =>
-    def f(x : Int) : Id[Int] = IdentityMonad.unit(fT(x))
-    def g(x : Int) : Id[Int] = IdentityMonad.unit(gT(x))
+    def f(x: Int): Id[Int] = IdentityMonad.unit(fT(x))
+
+    def g(x: Int): Id[Int] = IdentityMonad.unit(gT(x))
+
     val m = IdentityMonad.unit(mT)
     MonadLaws()(IdentityMonad).associativity(m)(f, g)
   }
@@ -88,14 +91,16 @@ object MonadLawsTest extends Properties("MonadLaws") {
   }
 
   property("bind = map + join - Id") = forAll { (mT: Int, fT: Int => Int) =>
-    def f(x : Int) : Id[Int] = IdentityMonad.unit(fT(x))
+    def f(x: Int): Id[Int] = IdentityMonad.unit(fT(x))
+
     val m = IdentityMonad.unit(mT)
     MonadLaws()(IdentityMonad).bindMapJoin(m)(f)
   }
 
   //EXCEPTION
   property("left identity - Exception") = forAll { (a: Int, fT: Int => Int) =>
-    def f(x : Int) : RaiseReturn[Int] = RaiseReturnMonad.unit(fT(x))
+    def f(x: Int): RaiseReturn[Int] = RaiseReturnMonad.unit(fT(x))
+
     MonadLaws()(RaiseReturnMonad).leftIdentity(a)(f)
   }
 
@@ -105,8 +110,10 @@ object MonadLawsTest extends Properties("MonadLaws") {
   }
 
   property("associativity - Exception") = forAll { (mT: Int, fT: Int => Int, gT: Int => Int) =>
-    def f(x : Int) : RaiseReturn[Int] = RaiseReturnMonad.unit(fT(x))
-    def g(x : Int) : RaiseReturn[Int] = RaiseReturnMonad.unit(gT(x))
+    def f(x: Int): RaiseReturn[Int] = RaiseReturnMonad.unit(fT(x))
+
+    def g(x: Int): RaiseReturn[Int] = RaiseReturnMonad.unit(gT(x))
+
     val m = RaiseReturnMonad.unit(mT)
     MonadLaws()(RaiseReturnMonad).associativity(m)(f, g)
   }
@@ -122,7 +129,8 @@ object MonadLawsTest extends Properties("MonadLaws") {
   }
 
   property("bind = map + join - Exception") = forAll { (mT: Int, fT: Int => Int) =>
-    def f(x : Int) : RaiseReturn[Int] = RaiseReturnMonad.unit(fT(x))
+    def f(x: Int): RaiseReturn[Int] = RaiseReturnMonad.unit(fT(x))
+
     val m = RaiseReturnMonad.unit(mT)
     MonadLaws()(RaiseReturnMonad).bindMapJoin(m)(f)
   }
@@ -165,7 +173,8 @@ object MonadLawsTest extends Properties("MonadLaws") {
 
   //IO
   property("left identity - IO") = forAll { (a: Int, fT: Int => Int) =>
-    def f(x : Int) : IOStr[Int] = IOStrMonad.unit(fT(x))
+    def f(x: Int): IOStr[Int] = IOStrMonad.unit(fT(x))
+
     MonadLaws()(IOStrMonad).leftIdentity(a)(f)
   }
 
@@ -175,8 +184,10 @@ object MonadLawsTest extends Properties("MonadLaws") {
   }
 
   property("associativity - IO") = forAll { (mT: Int, fT: Int => Int, gT: Int => Int) =>
-    def f(x : Int) : IOStr[Int] = IOStrMonad.unit(fT(x))
-    def g(x : Int) : IOStr[Int] = IOStrMonad.unit(gT(x))
+    def f(x: Int): IOStr[Int] = IOStrMonad.unit(fT(x))
+
+    def g(x: Int): IOStr[Int] = IOStrMonad.unit(gT(x))
+
     val m = IOStrMonad.unit(mT)
     MonadLaws()(IOStrMonad).associativity(m)(f, g)
   }
@@ -192,7 +203,8 @@ object MonadLawsTest extends Properties("MonadLaws") {
   }
 
   property("bind = map + join - IO") = forAll { (mT: Int, fT: Int => Int) =>
-    def f(x : Int) = IOStrMonad.unit(fT(x))
+    def f(x: Int) = IOStrMonad.unit(fT(x))
+
     val m = IOStrMonad.unit(mT)
     MonadLaws()(IOStrMonad).bindMapJoin(m)(f)
   }

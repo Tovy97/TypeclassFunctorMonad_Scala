@@ -1,20 +1,15 @@
-\frametitle{Differences between Functors and Monads (2)}
-But, let's try with a new function:
+\frametitle{Transformer Laws}
+Transformer laws are expressed in scala in this way:
 \begin{lstlisting}[language=scala]
-val a : Option[Int] = Some(20)		
-def f(x:Int) : Option[Int] = if (x == 0) None else Some(2 / x)
-val temp1 = a.applyMap(f) // return Some(Some(0))
-temp1.applyMap(f)// COMPILE ERROR
+def law1(a: A): Boolean =
+	transformer.monadM1.unit(a).applyLiftT == transformer.unit(a)
+def law2(m: M1[A])(f: A => M1[A]): Boolean =
+	transformer.lift(transformer.monadM1.bind(m)(f)) == transformer.lift(m).applyBindT(transformer.lift[A] _ compose f)
+def leftIdentity(a: A)(f: A => M1[M2[A]]): Boolean =
+	transformer.unit(a).applyBindT(f) == f(a)
+def rightIdentity(t: M1[M2[A]]): Boolean =
+	t.applyBindT(t.applyUnitT) == t
+def associativity(t: M1[M2[A]])(f: A => M1[M2[A]], g: A => M1[M2[A]]): Boolean =
+	t.applyBindT(f).applyBindT(g) == t.applyBindT((x: A) => f(x).applyBindT(g))
 \end{lstlisting}	
-	Here we stuck because, after the first step, we got an Option of Option of Int.
-	We could manage this problem and adjust the second function	to work with Option of Option of Int,
-	but in this way we would get an Option of Option of Option of Int as result type and we could continue getting more and more layers of Option.
-	
-	\pause
-	
-	Here monads come to help!
-\begin{lstlisting}[language=scala]
-val temp = a.bind(f) // return Some(0)
-temp.bind(f) //None
-\end{lstlisting}	
-	We could continue to apply bind endless, without change the return type.
+	We could test these laws through PBT ScalaCheck.

@@ -1,6 +1,6 @@
 package seminar_codes.implementation.transformer
 
-import TransformerHelper._
+import seminar_codes.implementation.transformer.TransformerHelper._
 
 class TransformerLaws[M1[_], M2[_], A](implicit transformer: Transformer[M1, M2]) {
   def law1(a: A): Boolean = {

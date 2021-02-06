@@ -6,8 +6,6 @@ import wadler_example.WadlerMain._
 
 object IdExample {
 
-  case class Id[A](a: A)
-
   lazy val withoutMonads: Unit = {
     println("Without monads")
 
@@ -39,4 +37,7 @@ object IdExample {
     withoutMonads
     withMonads
   }
+
+  case class Id[A](a: A)
+
 }

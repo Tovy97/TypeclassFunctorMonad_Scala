@@ -2,11 +2,11 @@
 	Again, let's start from bind (also called flatMap) and unit methods:
 \begin{lstlisting}[language=scala]
 def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
-def unit[A](a : A) : M[A]
+def unit[A](a: A): M[A]
 \end{lstlisting}
 	\pause
 	\begin{block}{Definition}
-		A monad is a class that has bind and unit methods which respect the following laws:
+		A monad is functor that has bind and unit methods which respect the following laws:
 		\begin{enumerate}[<+->]
 			\item \textbf{Left identity:}  given a function $f$ and an object $obj$ we have that $bind(unit(obj))(f) = f(obj)$.
 			\item \textbf{Right identity:} given a monad $obj$ we have that $bind(obj)(unit) = obj$
@@ -14,24 +14,41 @@ def unit[A](a : A) : M[A]
 			$bind(bind(obj)(f))(g) = bind(obj)(x \Rightarrow flatMap(f(x))(g))$
 		\end{enumerate}
 	\end{block}
-	\pause[4]
-	We could test these laws through PBT ScalaCheck.
 \end{frame}
 
-\begin{frame}[fragile]{Monads - Implementation (1)}	
+\begin{frame}[fragile]{Monads - Implementation (1a)}	
 	We'll use type classes to implement monads.
 	
 	Monads can be represented with the following interface
 \begin{lstlisting}[language=scala]
-trait Monad[M[_]] {
+trait Monad[M[_]] extends Functor[M] {
 	def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
-	def unit[A](a : A) : M[A]
+	def unit[A](a: A): M[A]
 }			
 \end{lstlisting}
 \end{frame}
 
+\begin{frame}[fragile]{Monads - Implementation (1b)}	
+	Monads are functors, so have $map$ function.
+	Often monads have also another method: $join$.
+	There are standard implementations of $map$ and $join$ through $bind$ and $unit$:
+	\begin{lstlisting}[language=scala]
+		trait Monad[M[_]] extends Functor[M] {
+			def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
+			def unit[A](a: A): M[A]
+			def join[A](ma: M[M[A]]): M[A] = { 
+				bind(ma)(m => m)
+			}
+			override def map[A, B](fa: M[A])(f: A => B): M[B] = {
+				bind(fa)(a => unit(f(a)))
+			}
+		}			
+	\end{lstlisting}
+	It's possible demonstrate that $bind(obj)(f)$ correspond to $join(map(obj)(f))$.
+\end{frame}
+
 \begin{frame}[fragile]{Monads - Implementation (2)}	
-	Let's extend List and Option classes to be monads.
+	Let's create List and Option monads.
 \begin{lstlisting}[language=scala]
 implicit object ListMonad extends Monad[List] {
 	override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] =
@@ -54,9 +71,8 @@ implicit object OptionMonad extends Monad[Option] {
 \begin{frame}[fragile]{Monads - Implementation (3)}		
 	As before, we can create a generic method that applies bind:
 \begin{lstlisting}[language=scala]
-def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = {
+def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = 
 	monad.bind(a)(f)
-}
 bind(List(1,2,3))((x : Int) => List(x + 1)) //List(2, 3, 4)
 bind(Some(1) : Option[Int])((x : Int) => Some(x + 1)) // Some(2)
 bind(Set(true, true, false))((x : Boolean) => Set(!x)) // COMPILE ERROR
@@ -64,16 +80,33 @@ bind(Set(true, true, false))((x : Boolean) => Set(!x)) // COMPILE ERROR
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (4)}	
-	Through extension method we could also use bind as method in monads:
+	Through extension method we could also use monads function as method in monads:
 \begin{lstlisting}[language=scala]
-implicit class MonadMethods[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
-	def bind(f: A => M[B]): M[B] = monad.bind(a)(f)
-	def unit : A => M[A] = monad.unit
+implicit class ToMonad1[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
+	lazy val applyUnit: A => M[A] = monad.unit	
+	def applyBind(f: A => M[B]): M[B] = monad.bind(a)(f)	
+	def applyMap(f: A => B): M[B] = monad.map(a)(f)
+}
+implicit class ToMonad2[M[_], A](a: M[M[A]])(implicit monad: Monad[M]) {
+	lazy val applyJoin: M[A] = monad.join(a)
 }
 List(1,2,3).bind((x : Int) => List(x + 1)) //List(2, 3, 4)
 (Some(1) : Option[Int]).bind((x : Int) => Some(x + 1)) // Some(2)
 Set(true, true, false).applyBind((x : Boolean) => Set(!x)) // COMPILE ERROR	
 \end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Monads Laws}
+	Monads laws are expressed in scala in this way:
+\begin{lstlisting}[language=scala]
+def leftIdentity(a: A)(f: A => M[A]): Boolean = 
+	monad.unit(a).applyBind(f) == f(a)
+def rightIdentity(t: M[A]): Boolean = 
+	t.applyBind(t.applyUnit) == t
+def associativity(t: M[A])(f: A => M[A], g: A => M[A]): Boolean =
+	t.applyBind(f).applyBind(g) == t.applyBind((x: A) => f(x).applyBind(g))
+\end{lstlisting}	
+	We could test these laws through PBT ScalaCheck.
 \end{frame}
 
 \begin{frame}[fragile]{Differences between Functors and Monads (1)}
@@ -82,8 +115,8 @@ Set(true, true, false).applyBind((x : Boolean) => Set(!x)) // COMPILE ERROR
 	Let's start from a simple example: concatenation of map function.
 \begin{lstlisting}[language=scala]
 val a : Option[Int] = Some(20)
-val temp = a.applyMap(_ + 1) //Some(2)
-temp.applyMap(_ + 1) // Some(3)
+val temp = a.applyMap(_ + 1) //Some(22)
+temp.applyMap(_ + 1) // Some(23)
 \end{lstlisting}				
 	This example works nicely. We start from an Option of Int, after the first step we have an Option of Int on which we apply again 
 	the same map function and we finally get an Option of Int.

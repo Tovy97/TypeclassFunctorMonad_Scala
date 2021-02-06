@@ -1,0 +1,121 @@
+\begin{frame}[fragile]{Functors compose with Functors}
+	Let's start from an example
+\begin{lstlisting}[language=scala]
+val v = List(Option(1), None, Option(3))
+val f1: Int => String = _ + "a"
+v.applyMap(x => x.applyMap(f1)) //List(Some(1a), None, Some(3a))
+\end{lstlisting}
+	If we have a functors of a functor we can compose $map$ in a simple (and intuitive) way: $map(v)(x => map(x)(f1))$.
+\end{frame}
+
+\begin{frame}[fragile]{Monads don't compose with monads (1)}
+	Again, let's start from an example
+\begin{lstlisting}[language=scala]
+val v = List(Option(1), None, Option(3))
+val f2: Int => List[Option[String]] = x => List(Some(x + "a"))
+v.applyBind(x => x.applyBind(f2)) // COMPILE ERROR
+\end{lstlisting}
+	If we have a monads of a monads we \textbf{cannot} compose $bind$ in a simple (and intuitive) way: $bind(v)(x => bind(x)(f2))$.
+	We would have type mismatch error. 	
+\end{frame}
+
+\begin{frame}[fragile]{Monads don't compose with monads (2)}	
+	A solution could be
+\begin{lstlisting}[language=scala]
+v.applyBind {
+	case None => default
+	case Some(x) => f2(x)
+} //List(Some(1a), None, Some(3a))
+\end{lstlisting}	
+	This conduces to boilerplate code (again...).
+
+	Note also that now Option could be or not a monad because we don't use bind or unit of Option. 
+	So the problem is related to monad which internal type is generic.
+\end{frame}
+
+\begin{frame}[fragile]{Transformer}
+	Monad transformers are monad which internal type is generic (with generic instantiated with non-generic type), 
+	so they are monad of type $M1[M2[A]]$ with an additional method $lift$.
+	\pause 
+	They have the same laws of monad, plus:
+	\begin{enumerate}[<+->]
+		\item Law 1: given an object $obj$ we have that $lift(unit(obj)) = unit(obj)$ where unit call on the left is monad method and
+		unit on the right is transformer method.
+		\item Law 2: given a function $f$ and a monad $m$ we have that $lift(bind(m)(f)) = bind(lift(m))(lift \circ f)$ where
+		bind call on the left is monad method and
+		bind on the right is transformer method.
+	\end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Transformer - Implementation (1)}
+	We'll use type classes to implement monad transformers.
+\begin{lstlisting}[language=scala]
+trait Transformer[M1[_], M2[_]] {
+	implicit def monadM1: Monad[M1]	
+	def bind[A, B](fa: M1[M2[A]])(f: A => M1[M2[B]]): M1[M2[B]]
+	def unit[A](a: A): M1[M2[A]]
+	def lift[A](fa: M1[A]): M1[M2[A]]
+	def join[A](fa: M1[M2[M1[M2[A]]]]): M1[M2[A]] =
+		bind(fa)(m => m)
+	def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]] =
+		bind(fa)(a => unit(f(a)))
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Transformer - Implementation (2)}	
+	Let's create Option transformer, called OptionT.
+\begin{lstlisting}[language=scala]
+trait OptionT[M1[_]] extends Transformer[M1, Option] {
+	override def bind[A, B](fa: M1[Option[A]])(f: A => M1[Option[B]]): M1[Option[B]] = {
+		monadM1.bind(fa) {
+			case None => monadM1.unit(None)
+			case Some(a) => f(a)
+		}
+	}
+	override def lift[A](fa: M1[A]): M1[Option[A]] =
+		monadM1.bind(fa)(a => unit(a))
+	override def unit[A](a: A): M1[Option[A]] = monadM1.unit(Some(a))
+}		
+\end{lstlisting}		
+	We can instantiate it on list, provided implicit ListMonad, in  this way:
+\begin{lstlisting}[language=scala]
+implicit object ListOptionT extends OptionT[List] {
+	override implicit val monadM1: Monad[List] = implicitly
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]{Transformer - Implementation (3)}	
+	Through extension method we could also use transformer function as method in transformer:
+\begin{lstlisting}[language=scala]
+implicit class ToTransformer1[M1[_], M2[_], A, B](a: M1[M2[A]])(implicit transformer: Transformer[M1, M2]) {
+	lazy val applyUnitT: A => M1[M2[A]] = transformer.unit
+	def applyMapT(f: A => B): M1[M2[B]] = transformer.map(a)(f)	
+	def applyBindT(f: A => M1[M2[B]]): M1[M2[B]] = transformer.bind(a)(f)
+}
+implicit class ToTransformer2[M1[_], M2[_], A, B](fa: M1[A])(implicit transformer: Transformer[M1, M2]) {
+	lazy val applyLiftT: M1[M2[A]] = transformer.lift(fa)
+}
+implicit class ToTransformer3[M1[_], M2[_], A, B](fa: M1[M2[M1[M2[A]]]])(implicit transformer: Transformer[M1, M2]) {
+	lazy val applyJoinT: M1[M2[A]] = transformer.join(fa)
+}
+\end{lstlisting}	
+\end{frame}
+
+\begin{frame}[fragile]{Transformer Laws}
+	Transformer laws are expressed in scala in this way:
+\begin{lstlisting}[language=scala]
+def law1(a: A): Boolean = 
+	transformer.monadM1.unit(a).applyLiftT == transformer.unit(a)
+def law2(m: M1[A])(f: A => M1[A]): Boolean =
+	transformer.lift(transformer.monadM1.bind(m)(f)) == transformer.lift(m).applyBindT(transformer.lift[A] _ compose f)
+def leftIdentity(a: A)(f: A => M1[M2[A]]): Boolean = 
+	transformer.unit(a).applyBindT(f) == f(a)
+def rightIdentity(t: M1[M2[A]]): Boolean = 
+	t.applyBindT(t.applyUnitT) == t
+def associativity(t: M1[M2[A]])(f: A => M1[M2[A]], g: A => M1[M2[A]]): Boolean =
+	t.applyBindT(f).applyBindT(g) == t.applyBindT((x: A) => f(x).applyBindT(g))
+\end{lstlisting}	
+	We could test these laws through PBT ScalaCheck.
+\end{frame}

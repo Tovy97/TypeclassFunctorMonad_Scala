@@ -14,7 +14,9 @@ object WadlerMain extends App {
   }
 
   sealed trait Term
+
   case class Constant(c: Int) extends Term
+
   case class Div(t1: Term, t2: Term) extends Term
 
   IdExample.example

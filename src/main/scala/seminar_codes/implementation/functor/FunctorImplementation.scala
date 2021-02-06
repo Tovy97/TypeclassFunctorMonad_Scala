@@ -1,8 +1,9 @@
 package seminar_codes.implementation.functor
 
-import tree_example.implementation.{Tree, Empty, Node}
+import tree_example.implementation.{Empty, Node, Tree}
 
 object FunctorImplementation {
+
   implicit object ListFunctor extends Functor[List] {
     override def map[A, B](fa: List[A])(f: A => B): List[B] = fa.map(f)
   }
@@ -22,4 +23,5 @@ object FunctorImplementation {
         Node(map(left)(f), f(value), map(right)(f))
     }
   }
+
 }
