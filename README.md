@@ -7,7 +7,7 @@ There are also LaTeX slides inside.
 The code consists of three main parts.
 + Under the `seminar_codes` package there are the implementations of type classes, functors, monads and monad transformers with some running examples.
 + Under the `wadler_example` package there are the implementations of monad presented in Wadler's article "Monads for functional programming".
-+ Under the `tree_example` package there is an implementation of trees and BST as type classes. There is also an implementation of functor on tree.
++ Under the `tree_example` package there is an implementation of RedBlackTree and BinarySearchTree as type classes. There is also an implementation of functor on tree.
 + Under the `test` folder there are tests made in ScalaCheck of the laws for functors, monads and monad transformers.
 
 # Location
