@@ -51,34 +51,38 @@
 \headcommand {\beamer@framepages {34}{34}}
 \headcommand {\slideentry {3}{0}{9}{35/36}{}{0}}
 \headcommand {\beamer@framepages {35}{36}}
-\headcommand {\beamer@sectionpages {24}{36}}
-\headcommand {\beamer@subsectionpages {24}{36}}
-\headcommand {\sectionentry {4}{Monad Transformers}{37}{Monad Transformers}{0}}
-\headcommand {\slideentry {4}{0}{1}{37/37}{}{0}}
+\headcommand {\slideentry {3}{0}{10}{37/37}{}{0}}
 \headcommand {\beamer@framepages {37}{37}}
-\headcommand {\slideentry {4}{0}{2}{38/38}{}{0}}
+\headcommand {\slideentry {3}{0}{11}{38/38}{}{0}}
 \headcommand {\beamer@framepages {38}{38}}
-\headcommand {\slideentry {4}{0}{3}{39/39}{}{0}}
+\headcommand {\beamer@sectionpages {24}{38}}
+\headcommand {\beamer@subsectionpages {24}{38}}
+\headcommand {\sectionentry {4}{Monad Transformers}{39}{Monad Transformers}{0}}
+\headcommand {\slideentry {4}{0}{1}{39/39}{}{0}}
 \headcommand {\beamer@framepages {39}{39}}
-\headcommand {\slideentry {4}{0}{4}{40/42}{}{0}}
-\headcommand {\beamer@framepages {40}{42}}
-\headcommand {\slideentry {4}{0}{5}{43/43}{}{0}}
-\headcommand {\beamer@framepages {43}{43}}
-\headcommand {\slideentry {4}{0}{6}{44/44}{}{0}}
-\headcommand {\beamer@framepages {44}{44}}
-\headcommand {\slideentry {4}{0}{7}{45/45}{}{0}}
+\headcommand {\slideentry {4}{0}{2}{40/40}{}{0}}
+\headcommand {\beamer@framepages {40}{40}}
+\headcommand {\slideentry {4}{0}{3}{41/41}{}{0}}
+\headcommand {\beamer@framepages {41}{41}}
+\headcommand {\slideentry {4}{0}{4}{42/44}{}{0}}
+\headcommand {\beamer@framepages {42}{44}}
+\headcommand {\slideentry {4}{0}{5}{45/45}{}{0}}
 \headcommand {\beamer@framepages {45}{45}}
-\headcommand {\slideentry {4}{0}{8}{46/46}{}{0}}
+\headcommand {\slideentry {4}{0}{6}{46/46}{}{0}}
 \headcommand {\beamer@framepages {46}{46}}
-\headcommand {\beamer@sectionpages {37}{46}}
-\headcommand {\beamer@subsectionpages {37}{46}}
-\headcommand {\sectionentry {5}{Source codes}{47}{Source codes}{0}}
-\headcommand {\slideentry {5}{0}{1}{47/47}{}{0}}
+\headcommand {\slideentry {4}{0}{7}{47/47}{}{0}}
 \headcommand {\beamer@framepages {47}{47}}
-\headcommand {\slideentry {5}{0}{2}{48/48}{}{0}}
+\headcommand {\slideentry {4}{0}{8}{48/48}{}{0}}
 \headcommand {\beamer@framepages {48}{48}}
-\headcommand {\beamer@partpages {1}{48}}
-\headcommand {\beamer@subsectionpages {47}{48}}
-\headcommand {\beamer@sectionpages {47}{48}}
-\headcommand {\beamer@documentpages {48}}
-\headcommand {\gdef \inserttotalframenumber {32}}
+\headcommand {\beamer@sectionpages {39}{48}}
+\headcommand {\beamer@subsectionpages {39}{48}}
+\headcommand {\sectionentry {5}{Source codes}{49}{Source codes}{0}}
+\headcommand {\slideentry {5}{0}{1}{49/49}{}{0}}
+\headcommand {\beamer@framepages {49}{49}}
+\headcommand {\slideentry {5}{0}{2}{50/50}{}{0}}
+\headcommand {\beamer@framepages {50}{50}}
+\headcommand {\beamer@partpages {1}{50}}
+\headcommand {\beamer@subsectionpages {49}{50}}
+\headcommand {\beamer@sectionpages {49}{50}}
+\headcommand {\beamer@documentpages {50}}
+\headcommand {\gdef \inserttotalframenumber {34}}

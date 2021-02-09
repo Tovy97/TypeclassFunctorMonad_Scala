@@ -2,5 +2,5 @@
 \beamer@sectionintoc {1}{Introduction: Type classes}{3}{0}{1}
 \beamer@sectionintoc {2}{Functors}{16}{0}{2}
 \beamer@sectionintoc {3}{Monads}{24}{0}{3}
-\beamer@sectionintoc {4}{Monad Transformers}{37}{0}{4}
-\beamer@sectionintoc {5}{Source codes}{47}{0}{5}
+\beamer@sectionintoc {4}{Monad Transformers}{39}{0}{4}
+\beamer@sectionintoc {5}{Source codes}{49}{0}{5}

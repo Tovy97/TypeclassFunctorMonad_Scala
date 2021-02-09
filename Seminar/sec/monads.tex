@@ -143,3 +143,32 @@ temp.bind(f) //None
 \end{lstlisting}	
 	We could continue to apply bind endless, without change the return type.
 \end{frame}
+
+\begin{frame}[fragile]{Functors and Monads in Scala (1)}
+	Scala official API doesn't contain Functor and Monad trait, however cite then along the documentation.
+	For example, in Option class documentation we could find:
+	\begin{quotation}
+		The most idiomatic way to use an $Option$ instance is to treat it as a collection or \textbf{monad} and use $map$, $flatMap$\footnote{in scala $bind$ is called $flatMap$} [\dots]
+	\end{quotation}	
+\end{frame}
+
+\begin{frame}[fragile]{Functors and Monads in Scala (2)}
+	Scala offers syntactic sugar to simplify call to $map$ and $flatMap$ methods through $for-expression$.
+\begin{lstlisting}[language=scala]
+val temp = for {
+	i <- Option(1)
+	j <- Option(2)
+	k <- Option(3)
+} yield i + j + k //Some(6)	
+\end{lstlisting}	
+	is equivalent to
+\begin{lstlisting}[language=scala]
+ val temp: Option[Int] = Some(1).flatMap { 
+	(i: Int) => Some(2).flatMap { 
+		(j: Int) => Some(3).map {
+			(k: Int) => i + j + k
+		}
+	}
+} //Some(6)	
+\end{lstlisting}		
+\end{frame}
