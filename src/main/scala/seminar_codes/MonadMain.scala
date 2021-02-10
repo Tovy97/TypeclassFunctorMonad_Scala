@@ -10,11 +10,11 @@ object MonadMain extends App {
 
   //EXAMPLES
   println(bind(List(1, 2, 3))((x: Int) => List(x + 1))) //List(2, 3, 4)
-  println(bind(Some(1): Option[Int])((x: Int) => Some(x + 1))) // Some(2)
+  println(bind(Option(1))((x: Int) => Some(x + 1))) // Some(2)
   //println(bind(Set(true, true, false))((x : Boolean) => Set(!x))) // COMPILE ERROR
 
   println(List(1, 2, 3).applyBind((x: Int) => List(x + 1))) //List(2, 3, 4)
-  println((Some(1): Option[Int]).applyBind((x: Int) => Some(x + 1))) // Some(2)
+  println(Option(1).applyBind((x: Int) => Some(x + 1))) // Some(2)
   //println(Set(true, true, false).applyBind((x : Boolean) => Set(!x))) // COMPILE ERROR
 
   println()

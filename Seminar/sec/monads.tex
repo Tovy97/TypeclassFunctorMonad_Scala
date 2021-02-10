@@ -21,7 +21,7 @@ def unit[A](a: A): M[A]
 	
 	Monads can be represented with the following interface
 \begin{lstlisting}[language=scala]
-trait Monad[M[_]] extends Functor[M] {
+trait Monad[M[_]] {
 	def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
 	def unit[A](a: A): M[A]
 }			
@@ -29,35 +29,31 @@ trait Monad[M[_]] extends Functor[M] {
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (1b)}	
-	Monads are functors, so have $map$ function.
+	Monads are functors, so they have $map$ function.
 	Often monads have also another method: $join$.
 	There are standard implementations of $map$ and $join$ through $bind$ and $unit$:
-	\begin{lstlisting}[language=scala]
-		trait Monad[M[_]] extends Functor[M] {
-			def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
-			def unit[A](a: A): M[A]
-			def join[A](ma: M[M[A]]): M[A] = { 
-				bind(ma)(m => m)
-			}
-			override def map[A, B](fa: M[A])(f: A => B): M[B] = {
-				bind(fa)(a => unit(f(a)))
-			}
-		}			
-	\end{lstlisting}
-	It's possible demonstrate that $bind(obj)(f)$ correspond to $join(map(obj)(f))$.
+\begin{lstlisting}[language=scala]
+trait Monad[M[_]] extends Functor[M] {
+	def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
+	def unit[A](a: A): M[A]
+	final def join[A](ma: M[M[A]]): M[A] = 
+		bind(ma)(m => m)
+	override final def map[A, B](fa: M[A])(f: A => B): M[B] = 
+		bind(fa)(a => unit(f(a)))
+}			
+\end{lstlisting}
+	It's possible to demonstrate that $bind(obj)(f)$ correspond to $join(map(obj)(f))$.
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (2)}	
 	Let's create List and Option monads.
 \begin{lstlisting}[language=scala]
 implicit object ListMonad extends Monad[List] {
-	override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] =
-		fa.flatMap(f)
+	override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
 	override def unit[A](a: A): List[A] = List(a)
 }
 implicit object OptionMonad extends Monad[Option] {
-	override def bind[A, B](fa: Option[A])(f: A => Option[B]): Option[B] =
-		fa match {
+	override def bind[A, B](fa: Option[A])(f: A => Option[B]): Option[B] = fa match {
 			case None => None
 			case Some(a) => f(a)
 		}
@@ -71,10 +67,9 @@ implicit object OptionMonad extends Monad[Option] {
 \begin{frame}[fragile]{Monads - Implementation (3)}		
 	As before, we can create a generic method that applies bind:
 \begin{lstlisting}[language=scala]
-def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = 
-	monad.bind(a)(f)
+def bind[M[_], A, B](a: M[A])(f: A => M[B])(implicit monad: Monad[M]): M[B] = monad.bind(a)(f)
 bind(List(1,2,3))((x : Int) => List(x + 1)) //List(2, 3, 4)
-bind(Some(1) : Option[Int])((x : Int) => Some(x + 1)) // Some(2)
+bind(Option(1))((x : Int) => Some(x + 1)) // Some(2)
 bind(Set(true, true, false))((x : Boolean) => Set(!x)) // COMPILE ERROR
 \end{lstlisting}	
 \end{frame}
@@ -91,7 +86,7 @@ implicit class ToMonad2[M[_], A](a: M[M[A]])(implicit monad: Monad[M]) {
 	lazy val applyJoin: M[A] = monad.join(a)
 }
 List(1,2,3).bind((x : Int) => List(x + 1)) //List(2, 3, 4)
-(Some(1) : Option[Int]).bind((x : Int) => Some(x + 1)) // Some(2)
+Option(1).bind((x : Int) => Some(x + 1)) // Some(2)
 Set(true, true, false).applyBind((x : Boolean) => Set(!x)) // COMPILE ERROR	
 \end{lstlisting}	
 \end{frame}
@@ -103,8 +98,9 @@ def leftIdentity(a: A)(f: A => M[A]): Boolean =
 	monad.unit(a).applyBind(f) == f(a)
 def rightIdentity(t: M[A]): Boolean = 
 	t.applyBind(t.applyUnit) == t
-def associativity(t: M[A])(f: A => M[A], g: A => M[A]): Boolean =
+def associativity(t: M[A])(f: A => M[A], g: A => M[A]): Boolean = {
 	t.applyBind(f).applyBind(g) == t.applyBind((x: A) => f(x).applyBind(g))
+}
 \end{lstlisting}	
 	We could test these laws through PBT ScalaCheck.
 \end{frame}
@@ -126,7 +122,7 @@ temp.applyMap(_ + 1) // Some(23)
 	But, let's try with a new function:
 \begin{lstlisting}[language=scala]
 val a : Option[Int] = Some(20)		
-def f(x:Int) : Option[Int] = if (x == 0) None else Some(2 / x)
+def f(x:Int) : Option[Int] = if (x == 0) None else Some(2/x)
 val temp1 = a.applyMap(f) // return Some(Some(0))
 temp1.applyMap(f)// COMPILE ERROR
 \end{lstlisting}	
@@ -145,7 +141,7 @@ temp.bind(f) //None
 \end{frame}
 
 \begin{frame}[fragile]{Functors and Monads in Scala (1)}
-	Scala official API doesn't contain Functor and Monad trait, however cite then along the documentation.
+	Scala official API doesn't contain Functor and Monad trait, but cites them along the documentation.
 	For example, in Option class documentation we could find:
 	\begin{quotation}
 		The most idiomatic way to use an $Option$ instance is to treat it as a collection or \textbf{monad} and use $map$, $flatMap$\footnote{in scala $bind$ is called $flatMap$} [\dots]

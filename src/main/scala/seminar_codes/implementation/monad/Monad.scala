@@ -7,11 +7,11 @@ trait Monad[M[_]] extends Functor[M] {
 
   def unit[A](a: A): M[A] //also called apply
 
-  def join[A](ma: M[M[A]]): M[A] = { //also called flatten
+  final def join[A](ma: M[M[A]]): M[A] = { //also called flatten
     bind(ma)(m => m)
   }
 
-  override def map[A, B](fa: M[A])(f: A => B): M[B] = {
+  override final def map[A, B](fa: M[A])(f: A => B): M[B] = {
     bind(fa)(a => unit(f(a)))
   }
 }

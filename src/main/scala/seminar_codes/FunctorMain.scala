@@ -12,11 +12,11 @@ object FunctorMain extends App {
   //EXAMPLES
 
   println(applyMap(List(1, 2, 3))(_ + 1)) //List(2, 3, 4)
-  println(applyMap(Some(1): Option[Int])(_ + 1)) // Some(2)
+  println(applyMap(Option(1))(_ + 1)) // Some(2)
   //println(applyMap(Set(true, true, false))(!_)) // COMPILE ERROR
 
   println(List(1, 2, 3).applyMap(_ + 1)) //List(2, 3, 4)
-  println((Some(1): Option[Int]).applyMap(_ + 1)) // Some(2)
+  println(Option(1).applyMap(_ + 1)) // Some(2)
   //println(Set(true, true, false).applyMap(!_)) // COMPILE ERROR
 
   println()

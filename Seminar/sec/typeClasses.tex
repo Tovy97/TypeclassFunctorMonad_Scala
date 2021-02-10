@@ -44,8 +44,9 @@ implicit object IntSummable extends Summable[Int] {
 	def sumElements(list: List[Int]): Int = list.sum
 }
 implicit object StringSummable extends Summable[String] {
-	def sumElements(list: List[String]): String = 
+	def sumElements(list: List[String]): String = {
 		list.mkString("")
+	}
 }
 \end{lstlisting}
 
@@ -53,8 +54,7 @@ implicit object StringSummable extends Summable[String] {
 
 	In this way we can now define a generic method that uses sumElements
 \begin{lstlisting}[language=scala]
-def sumAll[T](l: List[T])(implicit summable: Summable[T]): T =
-	summable.sumElements(l)		
+def sumAll[T](l: List[T])(implicit summable: Summable[T]): T = summable.sumElements(l)		
 \end{lstlisting}	
 \end{frame}
 
@@ -64,7 +64,7 @@ def sumAll[T](l: List[T])(implicit summable: Summable[T]): T =
 	
 \begin{lstlisting}[language=scala]
 sumAll(List(1,2,3)) // 6
-sumAll(List("Scala ", "is ", "awesome")) // "Scala is awesome"
+sumAll(List("Scala's ", "awesome")) // "Scala's awesome"
 sumAll(List(true, true, false)) // COMPILE ERROR				
 \end{lstlisting}
 

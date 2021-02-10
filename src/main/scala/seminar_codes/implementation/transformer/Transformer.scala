@@ -11,11 +11,11 @@ trait Transformer[M1[_], M2[_]] {
 
   def lift[A](fa: M1[A]): M1[M2[A]]
 
-  def join[A](fa: M1[M2[M1[M2[A]]]]): M1[M2[A]] = {
+  final def join[A](fa: M1[M2[M1[M2[A]]]]): M1[M2[A]] = {
     bind(fa)(m => m)
   }
 
-  def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]] = {
+  final def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]] = {
     bind(fa)(a => unit(f(a)))
   }
 }

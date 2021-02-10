@@ -23,18 +23,18 @@ v.applyBind(x => x.applyBind(f2)) // COMPILE ERROR
 	A solution could be
 \begin{lstlisting}[language=scala]
 v.applyBind {
-	case None => default
+	case None => ListMonad.unit(None) // List(None)
 	case Some(x) => f2(x)
 } //List(Some(1a), None, Some(3a))
 \end{lstlisting}	
 	This conduces to boilerplate code (again...).
 
 	Note also that now Option could be or not a monad because we don't use bind or unit of Option. 
-	So the problem is related to monad which internal type is generic.
+	So the problem is related to monad which internal type is of the form $C[A]$.
 \end{frame}
 
 \begin{frame}[fragile]{Transformer}
-	Monad transformers are monad which internal type is generic (with generic instantiated with non-generic type), 
+	Monad transformers are monad which internal type of the form $C[A]$, 
 	so they are monad of type $M1[M2[A]]$ with an additional method $lift$.
 	\pause 
 	They have the same laws of monad, plus:
@@ -55,9 +55,9 @@ trait Transformer[M1[_], M2[_]] {
 	def bind[A, B](fa: M1[M2[A]])(f: A => M1[M2[B]]): M1[M2[B]]
 	def unit[A](a: A): M1[M2[A]]
 	def lift[A](fa: M1[A]): M1[M2[A]]
-	def join[A](fa: M1[M2[M1[M2[A]]]]): M1[M2[A]] =
+	final def join[A](fa: M1[M2[M1[M2[A]]]]): M1[M2[A]] =
 		bind(fa)(m => m)
-	def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]] =
+	final def map[A, B](fa: M1[M2[A]])(f: A => B): M1[M2[B]] =
 		bind(fa)(a => unit(f(a)))
 }
 \end{lstlisting}
@@ -75,7 +75,8 @@ trait OptionT[M1[_]] extends Transformer[M1, Option] {
 	}
 	override def lift[A](fa: M1[A]): M1[Option[A]] =
 		monadM1.bind(fa)(a => unit(a))
-	override def unit[A](a: A): M1[Option[A]] = monadM1.unit(Some(a))
+	override def unit[A](a: A): M1[Option[A]] = 
+		monadM1.unit(Some(a))
 }		
 \end{lstlisting}		
 	We can instantiate it on list, provided implicit ListMonad, in  this way:
@@ -91,8 +92,10 @@ implicit object ListOptionT extends OptionT[List] {
 \begin{lstlisting}[language=scala]
 implicit class ToTransformer1[M1[_], M2[_], A, B](a: M1[M2[A]])(implicit transformer: Transformer[M1, M2]) {
 	lazy val applyUnitT: A => M1[M2[A]] = transformer.unit
-	def applyMapT(f: A => B): M1[M2[B]] = transformer.map(a)(f)	
-	def applyBindT(f: A => M1[M2[B]]): M1[M2[B]] = transformer.bind(a)(f)
+	def applyMapT(f: A => B): M1[M2[B]] = 
+		transformer.map(a)(f)	
+	def applyBindT(f: A => M1[M2[B]]): M1[M2[B]] = 
+		transformer.bind(a)(f)
 }
 implicit class ToTransformer2[M1[_], M2[_], A, B](fa: M1[A])(implicit transformer: Transformer[M1, M2]) {
 	lazy val applyLiftT: M1[M2[A]] = transformer.lift(fa)
