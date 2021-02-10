@@ -1,11 +1,11 @@
 \begin{frame}[fragile]{Functors}
-	Let's start with map function:
+	Let's start with the map function:
 \begin{lstlisting}[language=scala]
 def map[A, B](fa: F[A])(f: A => B): F[B]
 \end{lstlisting}
 	\pause
 	\begin{block}{Definition}
-		A functor is a class that has the map method which respects the following laws:
+		A functor is a class that has a map method that respects the following laws:
 		\begin{enumerate}[<+->]
 			\item \textbf{Identity:} given the identity function $id$ and a functor $obj$ we have that $map(obj)(id) = obj$.
 			\item \textbf{Composition:} given two functions $f$ and $g$ and a functor $obj$ we have that $map(map(obj)(f))(g) = map(obj)(g \circ f)$
@@ -38,8 +38,8 @@ implicit object optionFunctor: Functor[Option] {
 		}
 }			
 \end{lstlisting}		
-	The first case is easy because List class has already map function
-	(to be honestly, Option has map method too).
+	The first case is easy because List class has already a map function
+	(honestly, Option has a map method too).
 \end{frame}
 	
 \begin{frame}[fragile]{Functors - Implementation (3)}			
@@ -50,7 +50,7 @@ applyMap(List(1, 2, 3))(_ + 1) //List(2, 3, 4)
 applyMap(Option(1))(_ + 1) // Some(2)
 applyMap(Set(true, true, false))(!_) // COMPILE ERROR
 \end{lstlisting}	
-	Through extension method we could also use applyMap as method of functors:
+	Through extension method, we could also use applyMap as method of functors:
 \begin{lstlisting}[language=scala]
 implicit class ToFunctor[F[_], A, B](a: F[A])(implicit functor: Functor[F]) {
 	def applyMap(f: A => B): F[B] = functor.map(a)(f)
@@ -77,7 +77,7 @@ def composition(fa: F[A])(f: A => A, g: A => A): Boolean = {
 
 \begin{frame}[fragile]{Why are functors useful?}
 	Functors allow to avoid boilerplate code.
-	Let's take Option type. 
+	Let's take the Option type. 
 	Normally before applying a function on Option we should check if that value is either Some or None through pattern matching:
 \begin{lstlisting}[language=scala]
 val a : Option[Int] = Some(20)

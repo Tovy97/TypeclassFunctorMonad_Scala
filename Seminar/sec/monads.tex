@@ -1,12 +1,12 @@
 \begin{frame}[fragile]{Monads}
-	Again, let's start from bind (also called flatMap) and unit methods:
+	Again, let's start from the bind (also called flatMap) and unit methods:
 \begin{lstlisting}[language=scala]
 def bind[A, B](fa: M[A])(f: A => M[B]): M[B]
 def unit[A](a: A): M[A]
 \end{lstlisting}
 	\pause
 	\begin{block}{Definition}
-		A monad is functor that has bind and unit methods which respect the following laws:
+		A monad is a functor that has bind and unit methods that respect the following laws:
 		\begin{enumerate}[<+->]
 			\item \textbf{Left identity:}  given a function $f$ and an object $obj$ we have that $bind(unit(obj))(f) = f(obj)$.
 			\item \textbf{Right identity:} given a monad $obj$ we have that $bind(obj)(unit) = obj$
@@ -30,7 +30,7 @@ trait Monad[M[_]] {
 
 \begin{frame}[fragile]{Monads - Implementation (1b)}	
 	Monads are functors, so they have $map$ function.
-	Often monads have also another method: $join$.
+	Often monads are presented via another method: $join$.
 	There are standard implementations of $map$ and $join$ through $bind$ and $unit$:
 \begin{lstlisting}[language=scala]
 trait Monad[M[_]] extends Functor[M] {
@@ -42,11 +42,11 @@ trait Monad[M[_]] extends Functor[M] {
 		bind(fa)(a => unit(f(a)))
 }			
 \end{lstlisting}
-	It's possible to demonstrate that $bind(obj)(f)$ correspond to $join(map(obj)(f))$.
+	It's possible to demonstrate that $bind(obj)(f)$ corresponds to $join(map(obj)(f))$.
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (2)}	
-	Let's create List and Option monads.
+	Let's create the List and Option monads.
 \begin{lstlisting}[language=scala]
 implicit object ListMonad extends Monad[List] {
 	override def bind[A, B](fa: List[A])(f: A => List[B]): List[B] = fa.flatMap(f)
@@ -60,8 +60,8 @@ implicit object OptionMonad extends Monad[Option] {
 	override def unit[A](a: A): Option[A] = Some(a)
 }		
 \end{lstlisting}		
-	The first case is easy because List class has already flatMap function
-	(to be honestly, Option has flatMap method too).
+	The first case is easy because List class has already a flatMap function
+	(honestly, Option has a flatMap method too).
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (3)}		
@@ -75,7 +75,7 @@ bind(Set(true, true, false))((x : Boolean) => Set(!x)) // COMPILE ERROR
 \end{frame}
 
 \begin{frame}[fragile]{Monads - Implementation (4)}	
-	Through extension method we could also use monads function as method in monads:
+	Through extension method, we could also use monads function as method in monads:
 \begin{lstlisting}[language=scala]
 implicit class ToMonad1[M[_], A, B](a: M[A])(implicit monad: Monad[M]) {
 	lazy val applyUnit: A => M[A] = monad.unit	
@@ -126,7 +126,7 @@ def f(x:Int) : Option[Int] = if (x == 0) None else Some(2/x)
 val temp1 = a.applyMap(f) // return Some(Some(0))
 temp1.applyMap(f)// COMPILE ERROR
 \end{lstlisting}	
-	Here we stuck because, after the first step, we got an Option of Option of Int. 
+	Here we are stuck because, after the first step, we got an Option of Option of Int. 
 	We could manage this problem and adjust the second function	to work with Option of Option of Int, 
 	but in this way we would get an Option of Option of Option of Int as result type and we could continue getting more and more layers of Option.
 	
@@ -137,19 +137,20 @@ temp1.applyMap(f)// COMPILE ERROR
 val temp = a.bind(f) // return Some(0)
 temp.bind(f) //None
 \end{lstlisting}	
-	We could continue to apply bind endless, without change the return type.
+	We could continue to apply bind endlessly, without change to the return type.
 \end{frame}
 
 \begin{frame}[fragile]{Functors and Monads in Scala (1)}
-	Scala official API doesn't contain Functor and Monad trait, but cites them along the documentation.
-	For example, in Option class documentation we could find:
+	Scala official API doesn't contain a Functor and Monad trait, but cites them along the documentation.
+	For example, in the Option class documentation we could find:
 	\begin{quotation}
 		The most idiomatic way to use an $Option$ instance is to treat it as a collection or \textbf{monad} and use $map$, $flatMap$\footnote{in scala $bind$ is called $flatMap$} [\dots]
 	\end{quotation}	
 \end{frame}
 
 \begin{frame}[fragile]{Functors and Monads in Scala (2)}
-	Scala offers syntactic sugar to simplify call to $map$ and $flatMap$ methods through $for-expression$.
+  	Scala offers syntactic sugar to simplify call to $map$ and $flatMap$
+  	methods through $for-expression$.
 \begin{lstlisting}[language=scala]
 val temp = for {
 	i <- Option(1)

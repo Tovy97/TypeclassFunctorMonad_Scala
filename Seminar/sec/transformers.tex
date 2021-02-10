@@ -5,7 +5,7 @@ val v = List(Option(1), None, Option(3))
 val f1: Int => String = _ + "a"
 v.applyMap(x => x.applyMap(f1)) //List(Some(1a), None, Some(3a))
 \end{lstlisting}
-	If we have a functors of a functor we can compose $map$ in a simple (and intuitive) way: $map(v)(x => map(x)(f1))$.
+	If we have a functor of a functor we can compose $map$ in a simple (and intuitive) way: $map(v)(x => map(x)(f1))$.
 \end{frame}
 
 \begin{frame}[fragile]{Monads don't compose with monads (1)}
@@ -27,23 +27,25 @@ v.applyBind {
 	case Some(x) => f2(x)
 } //List(Some(1a), None, Some(3a))
 \end{lstlisting}	
-	This conduces to boilerplate code (again...).
+	This yields boilerplate code (again...).
 
 	Note also that now Option could be or not a monad because we don't use bind or unit of Option. 
-	So the problem is related to monad which internal type is of the form $C[A]$.
+	So the problem is related to a monad whose internal type is of the form $C[A]$.
 \end{frame}
 
 \begin{frame}[fragile]{Transformer}
-	Monad transformers are monad which internal type of the form $C[A]$, 
+	Monad transformers are monads whose internal type is of the form $C[A]$, 
 	so they are monad of type $M1[M2[A]]$ with an additional method $lift$.
 	\pause 
 	They have the same laws of monad, plus:
 	\begin{enumerate}[<+->]
-		\item Law 1: given an object $obj$ we have that $lift(unit(obj)) = unit(obj)$ where unit call on the left is monad method and
-		unit on the right is transformer method.
-		\item Law 2: given a function $f$ and a monad $m$ we have that $lift(bind(m)(f)) = bind(lift(m))(lift \circ f)$ where
-		bind call on the left is monad method and
-		bind on the right is transformer method.
+        \item Law 1: given an object $obj$ we have that
+			$lift(unit(obj)) = unit(obj)$ where the unit call on the left is
+          	a monad method and unit on the right is a transformer
+          	method.
+		\item Law 2: given a function $f$ and a monad $m$ we have that $lift(bind(m)(f)) = bind(lift(m))(lift \circ f)$ where the
+			bind call on the left is a monad method and the
+			bind on the right is a transformer method.
 	\end{enumerate}
 \end{frame}
 
@@ -64,7 +66,7 @@ trait Transformer[M1[_], M2[_]] {
 \end{frame}
 
 \begin{frame}[fragile]{Transformer - Implementation (2)}	
-	Let's create Option transformer, called OptionT.
+	Let's create an Option transformer, called OptionT.
 \begin{lstlisting}[language=scala]
 trait OptionT[M1[_]] extends Transformer[M1, Option] {
 	override def bind[A, B](fa: M1[Option[A]])(f: A => M1[Option[B]]): M1[Option[B]] = {
@@ -79,7 +81,7 @@ trait OptionT[M1[_]] extends Transformer[M1, Option] {
 		monadM1.unit(Some(a))
 }		
 \end{lstlisting}		
-	We can instantiate it on list, provided implicit ListMonad, in  this way:
+	We can instantiate it on list, given  implicit ListMonad, in  this way:
 \begin{lstlisting}[language=scala]
 implicit object ListOptionT extends OptionT[List] {
 	override implicit val monadM1: Monad[List] = implicitly

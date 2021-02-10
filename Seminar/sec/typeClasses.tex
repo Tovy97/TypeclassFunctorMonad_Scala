@@ -19,11 +19,11 @@ trait Summable[T] {
 	def sumElements(list: List[T]): T
 }
 \end{lstlisting}
-	and we want that Int and String classes implement it.
+	and we want Int and String classes to implement it.
 
 	\pause
 
-	Of course we cannot change Int or String classes directly (they are into scala API), so the first option is discarded.
+	Of course we cannot change Int or String classes directly (they are in scala's API), so the first option is discarded.
 	
 	\pause
 	
@@ -33,7 +33,7 @@ trait Summable[T] {
 	\pause
 	
 	Surely we can create wrapping classes MyInt and MyStr, but in this way we have now two definitions of Int and of String and 
-	it could be messy.
+	it could get messy.
 \end{frame}
 
 \begin{frame}[fragile]{Introduction: Type classes - Example (2)}	
@@ -59,8 +59,8 @@ def sumAll[T](l: List[T])(implicit summable: Summable[T]): T = summable.sumEleme
 \end{frame}
 
 \begin{frame}[fragile]{Introduction: Type classes - Example (3)}
-	The advantage of this approach is that we can use sumAll method only with Int and String (all the other types will create 
-	a compile error) and, because of implict, we don't have to pass summable object to sumAll.
+	The advantage of this approach is that we can use sumAll method only with Int and String (all the other types yield
+	a compile error) and, because of implicit, we don't have to pass summable object to sumAll.
 	
 \begin{lstlisting}[language=scala]
 sumAll(List(1,2,3)) // 6
@@ -72,7 +72,7 @@ sumAll(List(true, true, false)) // COMPILE ERROR
 	
 \begin{frame}[fragile]{Introduction: Type classes - Example (4)}
 	
-	Through extension method we could also use sumAll as method in List of Int and List of String:
+	Through extension method, we could also use sumAll as method in List of Int and List of String:
 \begin{lstlisting}[language=scala]
 implicit class ListSummable[A](l: List[A])(implicit summable: Summable[A]) {
 	def sumAll: A = summable.sumElements(l)
