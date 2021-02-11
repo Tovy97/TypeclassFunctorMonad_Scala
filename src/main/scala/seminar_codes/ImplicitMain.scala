@@ -5,8 +5,10 @@ object ImplicitMain extends App {
   //Extension method
   implicit class PowerInt(i : Int) {
     def ** (exp:Int) : Int = pow(i, exp).toInt
+    def inc : Int = i + 1
   }
   println(2**7) //128
+  println(2.inc) //3
 
   //Implicit parameter
   implicit val square: Int => Int = (x:Int) => x * x
@@ -25,5 +27,5 @@ object ImplicitMain extends App {
   def applyFunction2(value : Int)(implicit t : Test) : Int = {
     t.square(value)
   }
-  println(applyFunction(5)) //25
+  println(applyFunction2(5)) //25
 }

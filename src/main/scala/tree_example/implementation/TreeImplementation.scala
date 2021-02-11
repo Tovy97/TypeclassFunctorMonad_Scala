@@ -5,6 +5,8 @@ import scala.annotation.tailrec
 object TreeImplementation {
 
   sealed trait Color
+  case object Black extends Color
+  case object Red extends Color
 
   trait OperationOnTree[A] {
     lazy val getEmpty: Tree[A] = Empty
@@ -46,8 +48,6 @@ object TreeImplementation {
 
     def delete(t: Tree[A])(El: A): Tree[A]
   }
-
-  implicit object IntBST extends BST[Int]
 
   class BST[A: Ordering] extends OperationOnTree[A] {
     val ord: Ordering[A] = implicitly
@@ -125,6 +125,8 @@ object TreeImplementation {
       case Node(_, _, dx) => getMax(dx)
     }
   }
+
+  implicit object IntBST extends BST[Int]
 
   class RBT[A: Ordering] extends OperationOnTree[(A, Color)] {
     val ord: Ordering[A] = implicitly
@@ -326,10 +328,6 @@ object TreeImplementation {
       }
     }
   }
-
-  case object Red extends Color
-
-  case object Black extends Color
 
   implicit object IntRBT extends RBT[Int]
 
